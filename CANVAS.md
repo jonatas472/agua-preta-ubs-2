@@ -34,12 +34,13 @@ Bloco 4 — Solução em uma tela
 Descreva o que a **tela principal** mostra e o que o usuário consegue fazer nela.
 
 - **A tela principal lista:**
-- 
+- Um menu com três botões grandes e ilustrados: "Agendar Consulta", "Guia de Serviços da UBS" e "Mural Verdade ou Mito (Vacinas)". Abaixo do menu, um card destaca próximo agendamento do usuário (se houver).
 
 - **A ação principal do usuário é:**
--
+- Tocar no botão "Agendar Consulta" para abrir o formulário ou tocar em "Verdade ou Mito" para pesquisar sobre uma vacina.
 
 -  **Depois de agir, o usuário vê:**
+-  A confirmação do seu agendamento salvo na tela ou a resposta detalhada e oficial desmentindo a informação sobre a vacina.
 
 Bloco 5 — Funcionalidades do MVP
 
@@ -96,12 +97,13 @@ Bloco 9 — Equipe, papéis e riscos
 | Jonatas | Dev / dados (Room ou Retrofit) | Criar o banco de dados Room para salvar e listar as consultas.   |
 | Cecília | Design e identidade visual | Criar o logotipo, escolher a paleta de cores e o visual do app. |
 | Isi | Documentação, build e entrega | Escrever os relatórios, configurar o GitHub e gerar o arquivo .apk. |
+
 **Riscos — o que pode dar errado e o plano B:**
 
 | Risco | Plano B |
 |---|---|
-| | |
-| | |
+| O banco de dados Room quebrar ou dar erro ao tentar salvar os agendamentos. | Usar o bloco try/catch para capturar a falha, exibir um aviso amigável para o usuário e armazenar os dados temporariamente em uma lista na memória (ArrayList) para não travar a apresentação. |
+| Perda de código ou conflitos complexos no GitHub (erros de merge) perto do prazo final. | Criar o hábito de enviar commits e dar push no repositório ao final de cada dia de trabalho, garantindo que a versão funcional anterior esteja sempre salva na nuvem. |
 
 Bloco 10 — Acordo de trabalho com IA
 
