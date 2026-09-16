@@ -92,10 +92,10 @@ Bloco 9 — Equipe, papéis e riscos
 
 | Integrante | Papel principal | Responsável por |
 |---|---|---|
-| | Dev / telas | Marília |
-| | Dev / dados (Room ou Retrofit) | Jonatas |
-| | Design e identidade visual | Cecília |
-| | Documentação, build e entrega | Isi |
+| Marília | Dev / telas | Criar as telas XML/Compose (Home, Agendamento e Vacinas). |
+| Jonatas | Dev / dados (Room ou Retrofit) | Criar o banco de dados Room para salvar e listar as consultas.   |
+| Cecília | Design e identidade visual | Criar o logotipo, escolher a paleta de cores e o visual do app. |
+| Isi | Documentação, build e entrega | Escrever os relatórios, configurar o GitHub e gerar o arquivo .apk. |
 **Riscos — o que pode dar errado e o plano B:**
 
 | Risco | Plano B |
