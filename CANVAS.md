@@ -1,14 +1,16 @@
-**Grupo: Apollo**
-**Integrantes: Jonatas Calado, Cecilia Helena, Isi Luana, Marilia Gabrielly** 
-**Turma: 3B - Ensino Medio Integrado** 
-**Repositório: https://github.com/jonatas472/agua-preta-ubs-2**
-**Data de preenchimento: 09/09/2026**
-**Entrega Final: 10/12/2026**
+| **Grupo** | Apollo|
+| **Integrantes (3 a 4)** | Jonatas Calado, Cecilia Helena, Isi Luana, Marilia Gabrielly|
+| **Turma** | 3º ano — Ensino Médio |
+| **Repositório** | `(https://github.com/jonatas472/agua-preta-ubs-2)` |
+| **Data de preenchimento** |09/09/2026 |
+| **Entrega final** | **10/12/2026** |
 
 Bloco 1 — Nome e pitch do app
 
-Nome do app: Água Preta UBS
-Pitch em uma frase: O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente.
+**Nome do app:** Água Preta UBS
+
+**Pitch em uma frase:**
+> "O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente.**."
 
 Bloco 2 — Problema
 
