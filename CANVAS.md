@@ -1,7 +1,7 @@
 | **Grupo** | Apollo|
 | **Integrantes (3 a 4)** | Jonatas Calado, Cecilia Helena, Isi Luana, Marilia Gabrielly|
 | **Turma** | 3º ano — Ensino Médio |
-| **Repositório** | `(https://github.com/jonatas472/agua-preta-ubs-2)` |
+| **Repositório** | `[https://github.com/jonatas472/agua-preta-ubs-2]` |
 | **Data de preenchimento** |09/09/2026 |
 | **Entrega final** | **10/12/2026** |
 
