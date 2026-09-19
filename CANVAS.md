@@ -83,10 +83,10 @@ Marque **uma** opção (as três valem a mesma nota):
 
 | Item | Definição do grupo |
 |---|---|
-| Nome exibido (`strings.xml`) | |
-| Cor principal (hex, em `Color.kt`) | `#______` |
-| Ideia do ícone (512×512) | |
-| `applicationId` | `br.edu.ifpe.______` |
+| Nome exibido (`strings.xml`) | UBS+ |
+| Cor principal (hex, em `Color.kt`) | `#668D3D` |
+| Ideia do ícone (512×512) |  Lâmpada estilizada em verde, representando conhecimento e soluções para a Unidade Básica de Saúde, com uma chama em tons de laranja/vermelho e elementos relacionados à saúde.  |
+| `applicationId` | `br.edu.ifpe.ubsaude` |
 | Versão inicial | `1.0` (versionCode `1`) |
 
 Bloco 9 — Equipe, papéis e riscos
