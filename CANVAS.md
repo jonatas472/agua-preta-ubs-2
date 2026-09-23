@@ -56,7 +56,7 @@ Máximo de **4 funcionalidades**. Se tiver mais, corte. Lembre: *qualidade acima
 | F1 | Agendamento Local de Consultas | Sim | Jonatas |
 | F2 | Painel de Serviços e Horários | Sim | Isi |
 | F3 | Mural "Verdade ou Mito" (Vacinas) | Sim/Não | Marilia |
-| F4 | Ajustes de Acessibilidade | Não | Cecília |
+| F4 |Visualização dos Próximos Agendamentos | Não | Cecília |
 
 Bloco 6 — Fora do escopo
 
