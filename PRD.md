@@ -22,18 +22,39 @@
 
 **Pitch:** "O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente.**."
 
-**Problema:** _Qual dor real vocês estão resolvendo? Descrevam uma situação concreta que alguém vive hoje.
+Bloco 2 — Problema
+
+Qual dor real vocês estão resolvendo? Descrevam uma situação concreta que alguém vive hoje.
 
 Estamos tentando resolver os agendamentos de consulta que estão sendo feitos manualmente nas UBS de Água Preta
 Junto da Desinformação acerca das vacinas que estão sendo aplicadas nos postos, que apresentam dificuldade em notificar todos da comunidade.
 Como esse problema é resolvido hoje (sem o app)?
 
-Esses problemas hoje são resolvidos de maneira manual, com fichas preenchidas manualmente e que requerem muito tempo do morador da comunidade._
+Esses problemas hoje são resolvidos de maneira manual, com fichas preenchidas manualmente e que requerem muito tempo do morador da comunidade.
+Bloco 3 — Público-alvo Perfil Principal
 
-**Por que vale a pena fazer isso:** _(o que muda na vida de quem usa)_
+Moradores da comunidade de Água Preta de todas as idades que utilizam o SUS local. O foco principal são adultos e idosos com pouca familiaridade com tecnologia, que necessitam de um sistema visualmente simples, altamente acessível para gerenciar sua saúde.
+Quando/Onde usam
 
----
+Em casa ou no trabalho, no momento em que precisam agendar uma consulta sem enfrentar filas físicas de madrugada, ou quando recebem uma notificação de campanha de vacinação.
+Uma pessoa real que testaria o app
 
+Mãe da Cecília (Funcionária da UBS Água Preta). Por trabalhar diretamente no local, ela validará se o aplicativo realmente facilita a rotina de agendamentos da unidade e se a interface está simples o suficiente para os pacientes reais da comunidade utilizarem.
+Bloco 4 — Solução em uma tela
+
+Descreva o que a tela principal mostra e o que o usuário consegue fazer nela.
+
+A tela principal lista:
+
+Um menu com três botões grandes e ilustrados: "Agendar Consulta", "Guia de Serviços da UBS" e "Mural Verdade ou Mito (Vacinas)". Abaixo do menu, um card destaca próximo agendamento do usuário (se houver).
+
+A ação principal do usuário é:
+
+Tocar no botão "Agendar Consulta" para abrir o formulário ou tocar em "Verdade ou Mito" para pesquisar sobre uma vacina.
+
+Depois de agir, o usuário vê:
+
+A confirmação do seu agendamento salvo na tela ou a resposta detalhada e oficial desmentindo a informação sobre a vacina.
 ## 2. Público e cenário de uso
 
 **Usuário-alvo:**
