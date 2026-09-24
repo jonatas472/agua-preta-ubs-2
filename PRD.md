@@ -68,15 +68,15 @@ A confirmação do seu agendamento salvo na tela ou a resposta detalhada e ofici
 
 **Objetivos desta versão (v1.0):**
 
-1.
-2.
-3.
+1. Permitir que o usuário realize e salve localmente um agendamento de consulta.
+2. Permitir que o usuário consulte os serviços e horários disponíveis na UBS.
+3. Disponibilizar um mural de "Verdade ou Mito" com informações relacionadas às vacinas.
 
 **Não-objetivos (fora do escopo — copie o Bloco 6 do Canvas):**
 
-- ❌
-- ❌
-- ❌
+- ❌ Sincronização em nuvem e login.
+- ❌ Integração com o sistema real do SUS ou ConecteSUS.
+- ❌ Chat em tempo real com médicos ou funcionários.
 
 ---
 
@@ -86,10 +86,10 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 
 | ID | História de usuário | Critério de aceite | Prioridade |
 |---|---|---|---|
-| RF01 | Como _usuário_, quero _ver a lista de ___ _ para _____. | Ao abrir o app, a lista aparece com os itens salvos; se não houver nenhum, aparece a mensagem "____". | Must |
-| RF02 | Como _usuário_, quero _adicionar ____ _ para _____. | Ao tocar em "+", preencher ____ e confirmar, o item aparece no topo da lista. | Must |
-| RF03 | | | Must |
-| RF04 | | | Should |
+| RF01 | Como usuário, quero realizar um agendamento de consulta para não precisar fazer o agendamento presencialmente. | Ao preencher os dados obrigatórios e confirmar, o agendamento é salvo localmente e uma confirmação é exibida na tela. | Must |
+| RF02 | Como usuário, quero consultar os serviços e horários da UBS para saber quais serviços estão disponíveis. | Ao acessar o painel de serviços, o usuário consegue visualizar os serviços e seus respectivos horários. | Must |
+| RF03 | Como usuário, quero consultar informações sobre vacinas para verificar se uma informação é verdadeira ou falsa. | Ao acessar o mural "Verdade ou Mito", o usuário consegue visualizar a informação e sua explicação correspondente. | Must |
+| RF04 | Como usuário, quero visualizar meus próximos agendamentos para saber quando tenho uma consulta marcada. | Após realizar um agendamento, ele aparece na área de próximos agendamentos. | Should |
 | RF05 | | | Could |
 
 ---
@@ -137,15 +137,18 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 
 ### Se Opção A ou C (Room)
 
-**Entidade principal:** `_____`
+**Entidade principal:** `Agendamento`
 
 | Campo | Tipo | Obrigatório | Observação |
 |---|---|---|---|
 | `id` | Long | sim | chave primária, autogerada |
-| | | | |
-| | | | |
+| nome | String | sim | Nome do usuário |
+| data | String | sim | Data da consulta |
+| cartaoSUS | String | sim | Número do cartão SUS |
+| horario | String | sim | Horário da consulta |
+| servico | String | sim | Serviço/consulta escolhida |
 
-**Operações necessárias:** ( ) inserir ( ) listar ( ) atualizar ( ) excluir
+**Operações necessárias:** ( X ) inserir ( X ) listar ( ) atualizar ( ) excluir
 
 ### Se Opção B ou C (Retrofit)
 
