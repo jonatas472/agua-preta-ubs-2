@@ -174,18 +174,28 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 | Item | Escolha |
 |---|---|
 | Linguagem | Kotlin |
-| Interface | ( ) Jetpack Compose ( ) XML/Views |
-| Persistência | ( ) Room ( ) — |
+| Interface | ( X ) Jetpack Compose ( ) XML/Views |
+| Persistência | (X ) Room ( ) — |
 | Rede | ( ) Retrofit ( ) — |
-| Outras bibliotecas | |
-| `minSdk` / `targetSdk` | / |
+| Outras bibliotecas | Room KTX |
+| `minSdk` / `targetSdk` | Verificar valores definidos no build.gradle.kts |
 
 **Organização de pastas do projeto:**
 
 ```
-app/src/main/java/br/edu/ifpe/<app>/
-├── ui/        # telas
-├── data/      # Room (entidade, DAO, database) ou Retrofit (service, modelos)
+app/src/main/java/br/edu/ifpe<ubsaude/
+├── data/
+│   ├── local/
+│   ├── remote/
+│   └── repository/
+│
+├── model/
+│
+├── ui/
+│   ├── theme/
+│   ├── navigation/
+│   └── features/
+│
 └── MainActivity.kt
 ```
 
@@ -199,9 +209,9 @@ Liste o que pode dar errado e **o que o usuário vê** em cada caso. Cada linha 
 |---|---|---|
 | Sem internet (Opção B/C) | Mantém a tela e mostra aviso + botão "Tentar de novo" | "Sem conexão. Verifique a internet e tente novamente." |
 | API fora do ar / erro 500 | | |
-| Lista vazia (nenhum dado ainda) | | |
-| Campo obrigatório em branco | | |
-| Erro ao salvar no banco | | |
+| Lista vazia (nenhum dado ainda) | Mantém a tela funcionando e informa que não existem agendamentos. | "Nenhum agendamento encontrado." |
+| Campo obrigatório em branco | Impede o salvamento até que os campos sejam preenchidos. | "Por favor, preencha todos os campos corretamente para realizar o agendamento." |
+| Erro ao salvar no banco | Captura o erro e mantém o aplicativo aberto. | "Não foi possível salvar o agendamento. Tente novamente." |
 
 ---
 
@@ -209,19 +219,19 @@ Liste o que pode dar errado e **o que o usuário vê** em cada caso. Cada linha 
 
 | Item | Definição | Onde fica |
 |---|---|---|
-| Nome do app | | `strings.xml` |
-| Cor principal | `#______` | `Color.kt` |
-| Cor secundária | `#______` | `Color.kt` |
+| Nome do app | UBS+ | `strings.xml` |
+| Cor principal | `#668D3D` | `Color.kt` |
+| Cor secundária | `Definida posteriormente pelo grupo` | `Color.kt` |
 | Ícone 512×512 | | `loja/icone-512.png` |
-| `applicationId` | `br.edu.ifpe.______` | `build.gradle.kts` |
+| `applicationId` | br.edu.ifpe.ubsaude` | `build.gradle.kts` |
 | `versionName` / `versionCode` | `1.0` / `1` | `build.gradle.kts` |
 
 **Material da loja** (Etapa 4 do projeto):
 
 | Artefato | Limite | Conteúdo |
 |---|---|---|
-| Título | 30 caracteres | |
-| Descrição curta | 80 caracteres | |
+| Título | 30 caracteres | Água Preta UBS |
+| Descrição curta | 80 caracteres | Aplicativo para facilitar o acesso aos serviços da UBS. |
 | Descrição completa | — | _(escreva em `loja/descricao.md`)_ |
 | Imagem de destaque | 1024×500 | `loja/destaque-1024x500.png` |
 | Screenshots | mín. 2 | `loja/screenshots/` |
@@ -235,10 +245,14 @@ Liste o que pode dar errado e **o que o usuário vê** em cada caso. Cada linha 
 | # | O que testar | Passos | Resultado esperado | OK? |
 |---|---|---|---|---|
 | T1 | Abrir o app pela primeira vez | Instalar e abrir | Tela principal aparece com estado vazio explicado | |
-| T2 | Ação principal | | | |
+| T2 | Ação principal | Abrir "Agendar Consulta", preencher os campos e confirmar. | Agendamento é salvo e confirmação aparece. | |
 | T3 | Falha de rede/banco | Ativar modo avião e repetir T2 | Mensagem clara, app não fecha | |
 | T4 | Reabrir o app | Fechar e abrir de novo | Dados continuam lá (Opção A/C) | |
 | T5 | Teste com usuário externo | Pessoa de fora usa sem explicação | Consegue completar a ação principal | |
+| T6 | Campo Obrigatório Vazio | Tentar confirmar o agendamento sem preencher todos os campos. | Mensagem de erro aparece e o app não fecha. | |
+| T7 | Lista de agendamentos | Realizar um agendamento e acessar os próximos agendamentos. | Realizar um agendamento e acessar os próximos agendamentos. | |
+| T8 | Serviços | Acessar "Guia de Serviços da UBS". | Serviços e horários são exibidos. | | |
+| T9 | Vacinas | Acessar "Verdade ou Mito". | As informações sobre vacinas são exibidas corretamente. | | |
 
 **Testado em:** _(modelo do celular e versão do Android — pelo menos 2 aparelhos)_
 
@@ -263,8 +277,10 @@ Liste o que pode dar errado e **o que o usuário vê** em cada caso. Cada linha 
 | Risco | Impacto | Plano B |
 |---|---|---|
 | A API escolhida sai do ar ou passa a exigir pagamento | Alto | Trocar para ____ ou usar dados locais |
-| Integrante fica sem computador | | |
-| | | |
+| Integrante fica sem computador | Médio | Outro integrante poderá acessar o projeto pelo GitHub e continuar a implementação. |
+| O banco de dados Room apresentar erro ao salvar os agendamentos. | Alto | Utilizar try/catch, mostrar uma mensagem amigável e, se necessário para a apresentação, utilizar temporariamente uma lista em memória. |
+| Perda de código ou conflitos no GitHub próximos do prazo. | Alto | Realizar commits e push regularmente e manter a versão funcional anterior no repositório. |
+| Alguma funcionalidade ultrapassar o tempo disponível. | Médio | Priorizar as funcionalidades Must e deixar funcionalidades Should/Could para depois. |
 
 ---
 
@@ -272,25 +288,29 @@ Liste o que pode dar errado e **o que o usuário vê** em cada caso. Cada linha 
 
 A implementação usa o **Gemini no Android Studio**. Este PRD é o documento que diz à IA o que construir — quanto mais preciso ele estiver, menos a IA inventa. Regras completas em [`docs/USO_DE_IA.md`](docs/USO_DE_IA.md).
 
-**Recursos que vamos usar:** ( ) Chat ( ) Agent Mode ( ) Explain Code ( ) Ask Gemini no Logcat ( ) Generate Unit Tests ( ) Transform UI
+**Recursos que vamos usar:** ( X ) Chat ( X ) Agent Mode ( X ) Explain Code ( X ) Ask Gemini no Logcat ( ) Generate Unit Tests ( ) Transform UI
 
 **Regras que colocamos no `AGENTS.md`** _(resumo — o arquivo fica na raiz do repositório)_:
 
--
--
--
+- Gerar códigos comentados: a IA deve incluir comentários breves explicando a lógica de cada função gerada, especialmente nas operações do Room.
+- Priorizar código simples: não utilizar bibliotecas complexas ou arquiteturas avançadas sem necessidade. O código deve seguir o nível ensinado em sala de aula.
+- Não alterar o Gradle sem permissão: a IA não pode alterar as dependências do build.gradle sem autorização do grupo.
 
 **Divisão do perímetro explicável** — quem responde por explicar o quê na apresentação:
 
 | Parte do código | Responsável |
 |---|---|
-| Telas (`ui/`) | |
-| Dados (`data/`) | |
-| Identidade visual e recursos | |
-| Build e artefatos de loja | |
+| Telas (`ui/`) | Marilia |
+| Dados (`data/`) | Jonatas |
+| Identidade visual e recursos | Cecilia |
+| Build e artefatos de loja | Isi |
 
 **Decisões que o grupo tomou contra a sugestão da IA** _(preencher ao longo do projeto — isso conta a favor na avaliação)_:
 
+-O grupo escolheu Room em vez de uma API externa para o armazenamento dos dados.
+-O grupo decidiu manter o aplicativo sem login e sem sincronização em nuvem na versão inicial.
+-O grupo decidiu priorizar uma interface simples e acessível para adultos e idosos.
+-O grupo decidiu limitar o MVP a quatro funcionalidades.
 -
 
 ---
@@ -299,6 +319,6 @@ A implementação usa o **Gemini no Android Studio**. Este PRD é o documento qu
 
 | Versão | Data | Autor | O que mudou |
 |---|---|---|---|
-| 1.0 | | | Versão inicial |
+| 1.0 | 23/09/2026 | Grupo Apollo | Versão inicial |
 | | | | |
 
