@@ -10,7 +10,7 @@
 | | |
 |---|---|
 | **App** | |
-| **Grupo** | |
+| **Grupo** | Apollo |
 | **Autores** | |
 | **Versão do documento** | 1.0 |
 | **Última atualização** | ___/___/2026 |
