@@ -20,7 +20,7 @@
 
 ## 1. Visão do produto
 
-**Pitch:** _(copie do Bloco 1 do Canvas)_
+**Pitch:** "O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente.**."
 
 **Problema:** _(2 a 4 linhas — copie e melhore o Bloco 2)_
 
