@@ -14,7 +14,7 @@
 | **Autores** | Jonatas Calado, Cecilia Helena, Isi Luana, Marilia Gabrielly |
 | **Versão do documento** | 1.0 |
 | **Última atualização** | ___/___/2026 |
-| **Status** | ( ) Rascunho ( ) Em revisão ( ) Aprovado |
+| **Status** | ( ) Rascunho (+ ) Em revisão ( ) Aprovado |
 
 ---
 
