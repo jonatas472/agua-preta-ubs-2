@@ -60,7 +60,7 @@ A confirmação do seu agendamento salvo na tela ou a resposta detalhada e ofici
 **Usuário-alvo:**
 
 **História de uso (conte como uma cena real):**
-> _"São 19h, o [usuário] acabou de [situação]. Ele abre o app e [o que faz]. Em menos de 30 segundos, ele [resultado]."_
+> _"São 19h, o idoso acabou de lembrar que precisa ir a UBS. Ele abre o app e marca sua consulta na UBS mais proxima. Em menos de 30 segundos, ele marcar uma consulta para a data que quiser."_
 
 ---
 
