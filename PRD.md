@@ -22,7 +22,13 @@
 
 **Pitch:** "O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente.**."
 
-**Problema:** _(2 a 4 linhas — copie e melhore o Bloco 2)_
+**Problema:** _Qual dor real vocês estão resolvendo? Descrevam uma situação concreta que alguém vive hoje.
+
+Estamos tentando resolver os agendamentos de consulta que estão sendo feitos manualmente nas UBS de Água Preta
+Junto da Desinformação acerca das vacinas que estão sendo aplicadas nos postos, que apresentam dificuldade em notificar todos da comunidade.
+Como esse problema é resolvido hoje (sem o app)?
+
+Esses problemas hoje são resolvidos de maneira manual, com fichas preenchidas manualmente e que requerem muito tempo do morador da comunidade._
 
 **Por que vale a pena fazer isso:** _(o que muda na vida de quem usa)_
 
