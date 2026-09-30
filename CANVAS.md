@@ -13,7 +13,7 @@ Bloco 1 — Nome e pitch do app
 **Nome do app:** Água Preta UBS
 
 **Pitch em uma frase:**
-> "O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente.**."
+> "O Água Preta UBS ajuda a comunidade a marcar consultas e notificar a comunidade sobre vacinas sem precisar ir ao local para marcar presencialmente."
 
 Bloco 2 — Problema
 
