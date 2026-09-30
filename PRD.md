@@ -105,7 +105,6 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 | RNF05 | Textos visíveis ficam em `strings.xml`, não escritos direto no código | Revisão do código |
 | RNF06 | Todo arquivo do pacote do app tem comentário de fronteira escrito pelo grupo | Revisão do código |
 | RNF07 | Qualquer integrante consegue localizar e alterar qualquer parte do app | Teste de mudança ao vivo (rubrica) |
-| RNF08 | | |
 
 ---
 
