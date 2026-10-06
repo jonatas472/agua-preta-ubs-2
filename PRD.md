@@ -136,7 +136,9 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 
 ### Se Opção A ou C (Room)
 
-**Entidade principal:** `Agendamento`
+**Entidades do aplicativo:** 
+
+`Agendamento`
 
 | Campo | Tipo | Obrigatório | Observação |
 |---|---|---|---|
@@ -146,6 +148,16 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 | cartaoSUS | String | sim | Número do cartão SUS |
 | horario | String | sim | Horário da consulta |
 | servico | String | sim | Serviço/consulta escolhida |
+
+`Cadastro`
+
+| Campo | Tipo | Obrigatório | Observação |
+|---|---|---|---|
+| `id` | Long | sim | chave primária, autogerada |
+| `nome` | String | sim | Nome do usuário |
+| `cartaoSUS` | String | sim | Número do cartão SUS |
+| `dataNascimento` | String | sim | Data de nascimento |
+| `telefone` | String | sim | Telefone do usuário |
 
 **Operações necessárias:** ( X ) inserir ( X ) listar ( ) atualizar ( ) excluir
 
