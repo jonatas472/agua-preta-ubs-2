@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">UBS+</string>
+    <string name="welcome_message">Bem-vindo ao UBS+</string>
+    <string name="menu_title">O que você deseja fazer?</string>
+
+    <!-- Menu Buttons -->
+    <string name="btn_schedule">Agendar Consulta</string>
+    <string name="btn_services">Guia de Serviços</string>
+    <string name="btn_vaccines">Verdade ou Mito (Vacinas)</string>
+    <string name="btn_my_schedules">Meus Agendamentos</string>
+
+    <!-- Appointment Form -->
+    <string name="label_name">Nome Completo</string>
+    <string name="label_sus">Número do Cartão SUS</string>
+    <string name="label_date">Data da Consulta</string>
+    <string name="label_time">Horário</string>
+    <string name="label_service">Tipo de Serviço</string>
+    <string name="btn_confirm_schedule">Confirmar Agendamento</string>
+    <string name="error_empty_fields">Por favor, preencha todos os campos corretamente para realizar o agendamento.</string>
+
+    <!-- Services Screen -->
+    <string name="services_title">Serviços da Unidade</string>
+
+    <!-- Vaccines Screen -->
+    <string name="vaccines_title">Mural: Verdade ou Mito</string>
+    <string name="label_result">Resultado:</string>
+    <string name="label_explanation">Explicação:</string>
+
+    <!-- Appointments Screen -->
+    <string name="my_schedules_title">Próximos Agendamentos</string>
+    <string name="no_schedules">Nenhum agendamento encontrado.</string>
+
+    <!-- Navigation -->
+    <string name="back">Voltar</string>
 </resources>

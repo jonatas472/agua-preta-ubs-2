@@ -5,36 +5,60 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import br.edu.ifpe.ubsaude.ui.theme.UBSTheme
 
-// Fronteira de Arquivo: Definido pelo grupo Apollo (Ponto de entrada do app UBS+)
-
+/**
+ * Fronteira de Arquivo: Ponto de Entrada e Navegação do UBS+
+ * Configurado para o Protótipo Inicial.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             UBSTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Comunidade de Água Preta",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                // Surface é o fundo básico que usa a cor do tema
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    UBSAppNavigation()
                 }
             }
         }
     }
 }
 
+/**
+ * Componente que gerencia as trocas de tela (Navegação)
+ */
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Bem-vindo ao UBS+, $name!",
-        modifier = modifier
-    )
+fun UBSAppNavigation() {
+    val navController = rememberNavController()
+
+    // O NavHost define o "mapa" do aplicativo
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") { 
+            HomeScreen(navController) 
+        }
+        composable("agendamento") { 
+            ScheduleScreen(navController) 
+        }
+        composable("servicos") { 
+            ServicesScreen(navController) 
+        }
+        composable("vacinas") { 
+            VaccinesScreen(navController) 
+        }
+        composable("meus_agendamentos") { 
+            MyAppointmentsScreen(navController) 
+        }
+    }
 }
