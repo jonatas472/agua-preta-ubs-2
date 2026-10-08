@@ -522,3 +522,17 @@ PRINCÍPIO:
 SIMPLICIDADE > COMPLEXIDADE
 
 O resultado final deve parecer visualmente próximo ao design fornecido pelo grupo, mas continuar sendo um aplicativo Android desenvolvido em Kotlin + Jetpack Compose.
+
+Analise o protótipo visual que desenvolvi no Lovable:
+
+LINK DO LOVABLE: https://ubs-patient-path.lovable.app
+
+Use esse protótipo como referência visual para adaptar o aplicativo Água Preta UBS existente. Preserve a estrutura atual do projeto Android e utilize Kotlin, Jetpack Compose e Material 3.
+
+Primeiro, verifique se consegue acessar o link. Se não conseguir visualizar o protótipo, me avise e solicite capturas de tela das páginas necessárias. Não invente detalhes que não conseguiu observar.
+
+Utilize também a logo localizada em `app/src/main/res/drawable/logo_ubs.png`. Não crie outra logo nem altere a identidade visual original.
+
+Antes de modificar qualquer arquivo, apresente um plano das alterações que pretende realizar.
+Utilize a versão mais recente do protipo apresentado no link anexado.
+
