@@ -1,25 +1,38 @@
 <resources>
     <string name="app_name">UBS+</string>
     <string name="welcome_message">Bem-vindo ao UBS+</string>
-    <string name="menu_title">O que você deseja fazer?</string>
+    <string name="menu_title">O que você precisa hoje?</string>
 
-    <!-- Menu Buttons -->
+    <!-- Header Labels -->
+    <string name="header_unit">UBS • Água Preta</string>
+    <string name="header_location">Água Preta - Pernambuco</string>
+
+    <!-- Menu Buttons & Actions -->
     <string name="btn_schedule">Agendar Consulta</string>
-    <string name="btn_services">Guia de Serviços</string>
+    <string name="btn_services">Serviços e Horários</string>
     <string name="btn_vaccines">Verdade ou Mito (Vacinas)</string>
     <string name="btn_my_schedules">Meus Agendamentos</string>
+    <string name="btn_accessibility">Acessibilidade</string>
+    <string name="btn_profile">Perfil</string>
 
     <!-- Appointment Form -->
     <string name="label_name">Nome Completo</string>
     <string name="label_sus">Número do Cartão SUS</string>
-    <string name="label_date">Data da Consulta</string>
+    <string name="label_date">Data</string>
     <string name="label_time">Horário</string>
-    <string name="label_service">Tipo de Serviço</string>
-    <string name="btn_confirm_schedule">Confirmar Agendamento</string>
+    <string name="label_service">Serviço</string>
+    <string name="btn_confirm_schedule">Confirmar agendamento</string>
+    <string name="schedule_description">Preencha os dados abaixo para marcar sua consulta na UBS de Água Preta.</string>
     <string name="error_empty_fields">Por favor, preencha todos os campos corretamente para realizar o agendamento.</string>
 
+    <!-- Success Screen -->
+    <string name="title_confirmed">Consulta agendada!</string>
+    <string name="text_confirmed">Guarde seus dados e compareça à UBS de Água Preta no horário de atendimento.</string>
+    <string name="card_summary">Resumo do agendamento</string>
+    <string name="btn_back_home">Voltar ao início</string>
+
     <!-- Services Screen -->
-    <string name="services_title">Serviços da Unidade</string>
+    <string name="services_title">Serviços e horários</string>
 
     <!-- Vaccines Screen -->
     <string name="vaccines_title">Mural: Verdade ou Mito</string>
@@ -27,9 +40,14 @@
     <string name="label_explanation">Explicação:</string>
 
     <!-- Appointments Screen -->
-    <string name="my_schedules_title">Próximos Agendamentos</string>
+    <string name="my_schedules_title">Meus agendamentos</string>
     <string name="no_schedules">Nenhum agendamento encontrado.</string>
+    <string name="next_schedule">Próximo Agendamento</string>
 
     <!-- Navigation -->
+    <string name="nav_home">Início</string>
+    <string name="nav_schedules">Agendamentos</string>
+    <string name="nav_services">Serviços</string>
+    <string name="nav_profile">Perfil</string>
     <string name="back">Voltar</string>
 </resources>
