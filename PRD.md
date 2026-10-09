@@ -159,6 +159,15 @@ Escreva no formato de história de usuário + critério de aceite. Prioridade: *
 | horario | String | sim | Horário da consulta |
 | servico | String | sim | Serviço/consulta escolhida |
 
+#### Serviço
+
+| Campo | Tipo | Obrigatório | Observação |
+|---|---|---|---|
+| id | Long | sim | chave primária, autogerada |
+| nome | String | sim | Nome do serviço |
+| descricao | String | sim | Descrição do serviço |
+| horario | String | sim | Horário de atendimento |
+
 **Operações necessárias:** ( X ) inserir ( X ) listar ( ) atualizar ( ) excluir
 
 ### Se Opção B ou C (Retrofit)
