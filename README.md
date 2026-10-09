@@ -1,11 +1,4 @@
 # 🏥 Água Preta UBS
-
-<p align="center">
-  <img src="https://shields.io" alt="Status">
-  <img src="https://shields.io" alt="Kotlin">
-  <img src="https://shields.io" alt="Jetpack Compose">
-</p>
-
 ---
 
 ## 📝 Sobre o Projeto
