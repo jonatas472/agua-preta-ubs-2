@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Ponto de entrada do UBS+ Protótipo V2.
- * Gerencia o Scaffold principal com Drawer e BottomBar.
+ * Configurado para Fundo Branco e Alto Contraste.
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +41,6 @@ fun UBSAppContent() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // O ModalNavigationDrawer envolve todo o conteúdo para permitir o menu lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -50,10 +50,11 @@ fun UBSAppContent() {
             )
         }
     ) {
+        // Scaffold configurado com fundo branco absoluto
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            containerColor = Color.White,
             bottomBar = {
-                // Só mostra a barra inferior se não for a tela de confirmação
                 if (currentRoute != "confirmacao") {
                     UBSBottomNavigation(navController, currentRoute)
                 }

@@ -1,7 +1,10 @@
 package br.edu.ifpe.ubsaude
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,9 +33,13 @@ import br.edu.ifpe.ubsaude.ui.theme.GreenLight
 import br.edu.ifpe.ubsaude.ui.theme.GreenPrimary
 
 /**
- * Telas do Protótipo UBS+ v2
- * Adaptado para a nova identidade visual do Grupo Apollo.
- * Foco em simplicidade para estudantes do 3º Ano.
+ * Telas do Protótipo UBS+ v2 - Edição Final Strict (Fundo Branco / Letras Pretas)
+ * Garantindo consistência absoluta com o design: https://ubs-patient-path.lovable.app
+ * 
+ * PADRONIZAÇÃO REALIZADA:
+ * 1. Todas as telas com fundo Color.White.
+ * 2. Todas as letras em Color.Black (inclusive botões).
+ * 3. Uso de GreenLight como fundo de botões para manter legibilidade das letras pretas.
  */
 
 // --- TELA PRINCIPAL (HOME) ---
@@ -40,29 +47,31 @@ import br.edu.ifpe.ubsaude.ui.theme.GreenPrimary
 @Composable
 fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.header_unit), fontSize = 11.sp, color = Color.Gray)
+                        Text(stringResource(R.string.header_unit), fontSize = 11.sp, color = Color.Black)
                         Image(
                             painter = painterResource(id = R.drawable.logo_ubs),
                             contentDescription = "Logo UBS+",
-                            modifier = Modifier.height(28.dp)
+                            modifier = Modifier.height(28.dp).background(Color.White)
                         )
-                        Text(stringResource(R.string.header_location), fontSize = 10.sp, color = Color.Gray)
+                        Text(stringResource(R.string.header_location), fontSize = 10.sp, color = Color.Black)
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* Notificações */ }) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Notificações")
+                        Icon(Icons.Default.Notifications, contentDescription = "Notificações", tint = Color.Black)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
             )
         }
     ) { padding ->
@@ -70,10 +79,11 @@ fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .background(Color.White)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Card de Próximo Agendamento com "efeito cascata" simples
+            // Card de Próximo Agendamento
             NextAppointmentCard()
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -82,12 +92,13 @@ fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
                 text = stringResource(R.string.menu_title),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
+                color = Color.Black,
                 modifier = Modifier.fillMaxWidth()
             )
             
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botão Principal: Agendar
+            // Botão Principal: Agendar (Verde Claro com letras Pretas)
             ActionButtonBig(
                 text = stringResource(R.string.btn_schedule),
                 icon = Icons.Default.DateRange,
@@ -116,43 +127,29 @@ fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
 
 @Composable
 fun NextAppointmentCard() {
-    // Efeito de camadas usando um Box e um card menor atrás
-    Box(contentAlignment = Alignment.BottomCenter) {
-        // Camada de fundo (cascata)
-        Surface(
-            modifier = Modifier.fillMaxWidth(0.9f).height(100.dp),
-            color = GreenPrimary.copy(alpha = 0.3f),
-            shape = RoundedCornerShape(16.dp)
-        ) {}
-        
-        // Card Principal
-        Card(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = GreenPrimary)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        stringResource(R.string.next_schedule),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(Icons.Default.DateRange, contentDescription = null, tint = Color.White)
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text("Paciente: João da Silva", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text("Registro: 12/10/2026", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Sem horário agendado", color = Color.White, modifier = Modifier.weight(1f))
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.White)
-                }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(2.dp, GreenPrimary)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.next_schedule),
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = GreenPrimary)
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text("Paciente: João da Silva", color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text("Registro: 12/10/2026", color = Color.Black, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Sem agendamento marcado", color = Color.Black, fontSize = 14.sp, modifier = Modifier.weight(1f))
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = GreenPrimary)
             }
         }
     }
@@ -160,18 +157,20 @@ fun NextAppointmentCard() {
 
 @Composable
 fun ActionButtonBig(text: String, icon: ImageVector, onClick: () -> Unit) {
-    Button(
+    Surface(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(80.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = GreenLight, contentColor = Color.Black),
-        shape = RoundedCornerShape(16.dp),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+        modifier = Modifier.fillMaxWidth().height(84.dp),
+        color = GreenLight,
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically, 
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+        ) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = GreenPrimary)
             Spacer(modifier = Modifier.width(16.dp))
-            Text(text, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            Text(text, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black, modifier = Modifier.weight(1f))
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.Black)
         }
     }
 }
@@ -180,19 +179,19 @@ fun ActionButtonBig(text: String, icon: ImageVector, onClick: () -> Unit) {
 fun ActionButtonSmall(text: String, icon: ImageVector, modifier: Modifier, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(100.dp),
-        color = GreenLight,
+        modifier = modifier.height(110.dp),
+        color = Color.White,
         shape = RoundedCornerShape(16.dp),
-        shadowElevation = 2.dp
+        border = BorderStroke(1.dp, Color.LightGray)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-            Icon(icon, contentDescription = null, tint = GreenPrimary)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text, fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 16.sp)
+            Icon(icon, contentDescription = null, tint = GreenPrimary, modifier = Modifier.size(28.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text, fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 18.sp, color = Color.Black)
         }
     }
 }
@@ -208,66 +207,100 @@ fun ScheduleScreen(navController: NavController) {
     var servico by remember { mutableStateOf("") }
 
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold, color = Color.Black) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.Black)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(stringResource(R.string.schedule_description), color = Color.Gray)
+            Text(stringResource(R.string.schedule_description), color = Color.Black)
 
             OutlinedTextField(
                 value = nome, onValueChange = { nome = it },
-                label = { Text(stringResource(R.string.label_name)) },
+                label = { Text(stringResource(R.string.label_name), color = Color.Black) },
                 placeholder = { Text("Ex: João da Silva") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) }
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedBorderColor = GreenPrimary,
+                    unfocusedBorderColor = Color.LightGray,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                ),
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = GreenPrimary) }
             )
             
             OutlinedTextField(
                 value = sus, onValueChange = { sus = it },
-                label = { Text(stringResource(R.string.label_sus)) },
+                label = { Text(stringResource(R.string.label_sus), color = Color.Black) },
                 placeholder = { Text("000 0000 0000 0000") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                leadingIcon = { Icon(Icons.Default.AccountBox, contentDescription = null) }
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black, 
+                    unfocusedTextColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                ),
+                leadingIcon = { Icon(Icons.Default.AccountBox, contentDescription = null, tint = GreenPrimary) }
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = data, onValueChange = { data = it },
-                    label = { Text(stringResource(R.string.label_date)) },
-                    placeholder = { Text("DD/MM/AA") },
+                    label = { Text(stringResource(R.string.label_date), color = Color.Black) },
+                    placeholder = { Text("DD/MM/AAAA") },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
-                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) }
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black, 
+                        unfocusedTextColor = Color.Black,
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Black
+                    ),
+                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null, tint = GreenPrimary) }
                 )
                 OutlinedTextField(
                     value = hora, onValueChange = { hora = it },
-                    label = { Text(stringResource(R.string.label_time)) },
+                    label = { Text(stringResource(R.string.label_time), color = Color.Black) },
                     placeholder = { Text("00:00") },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
-                    leadingIcon = { Icon(Icons.Default.Notifications, contentDescription = null) }
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black, 
+                        unfocusedTextColor = Color.Black,
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Black
+                    ),
+                    leadingIcon = { Icon(Icons.Default.Notifications, contentDescription = null, tint = GreenPrimary) }
                 )
             }
 
             OutlinedTextField(
                 value = servico, onValueChange = { servico = it },
-                label = { Text(stringResource(R.string.label_service)) },
+                label = { Text(stringResource(R.string.label_service), color = Color.Black) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) }
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black, 
+                    unfocusedTextColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                ),
+                leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = GreenPrimary) }
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -275,10 +308,11 @@ fun ScheduleScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate("confirmacao") },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                shape = RoundedCornerShape(12.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = GreenLight),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, GreenPrimary)
             ) {
-                Text(stringResource(R.string.btn_confirm_schedule), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.btn_confirm_schedule), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             }
         }
     }
@@ -288,42 +322,46 @@ fun ScheduleScreen(navController: NavController) {
 @Composable
 fun ConfirmationScreen(navController: NavController) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier.fillMaxSize().background(Color.White).padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
-            modifier = Modifier.size(100.dp).background(GreenPrimary, CircleShape),
+            modifier = Modifier.size(90.dp).background(Color.White, CircleShape).border(2.dp, GreenPrimary, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(60.dp))
+            Icon(Icons.Default.Check, contentDescription = null, tint = GreenPrimary, modifier = Modifier.size(54.dp))
         }
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        Text(stringResource(R.string.title_confirmed), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = GreenPrimary)
+        Text(stringResource(R.string.title_confirmed), fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.Black)
         
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         
         Text(
             stringResource(R.string.text_confirmed),
             textAlign = TextAlign.Center,
-            color = Color.Gray
+            color = Color.Black,
+            fontSize = 16.sp
         )
         
         Spacer(modifier = Modifier.height(32.dp))
         
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = GreenLight),
-            shape = RoundedCornerShape(16.dp)
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, Color.LightGray)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(stringResource(R.string.card_summary), fontWeight = FontWeight.Bold)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
-                Text("Serviço: Clínico Geral")
-                Text("Data: 20/10/2026")
-                Text("Horário: 09:00")
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(stringResource(R.string.card_summary), fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 18.sp)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color.LightGray)
+                Text("Serviço: Clínico Geral", color = Color.Black, fontSize = 16.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("Data: 20/Out/2026", color = Color.Black, fontSize = 16.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("Unidade: UBS Água Preta", color = Color.Black, fontSize = 16.sp)
             }
         }
         
@@ -332,10 +370,11 @@ fun ConfirmationScreen(navController: NavController) {
         Button(
             onClick = { navController.navigate("home") { popUpTo("home") { inclusive = true } } },
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-            shape = RoundedCornerShape(12.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = GreenLight, contentColor = Color.Black),
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(1.dp, GreenPrimary)
         ) {
-            Text(stringResource(R.string.btn_back_home), fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.btn_back_home), fontWeight = FontWeight.Bold, color = Color.Black)
         }
     }
 }
@@ -345,40 +384,49 @@ fun ConfirmationScreen(navController: NavController) {
 @Composable
 fun ServicesScreen(navController: NavController) {
     val servicos = listOf(
-        Triple("Clínico Geral", "Segunda a Sexta", "08:00 às 17:00"),
-        Triple("Odontologia", "Terça e Quinta", "09:00 às 16:00"),
-        Triple("Vacinação", "Segunda a Sexta", "08:00 às 17:00"),
-        Triple("Pré-Natal", "Quarta-feira", "08:00 às 12:00")
+        Triple("Clínico Geral", "Segunda a Sexta", "08h às 17h"),
+        Triple("Odontologia", "Terça e Quinta", "09h às 16h"),
+        Triple("Vacinação", "Segunda a Sexta", "08h às 17h"),
+        Triple("Pré-Natal", "Quarta-feira", "08h às 12h")
     )
 
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.services_title), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.services_title), fontWeight = FontWeight.Bold, color = Color.Black) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.Black)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp), 
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             items(servicos) { item ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
-                    border = CardDefaults.outlinedCardBorder(),
-                    shape = RoundedCornerShape(12.dp)
+                    border = BorderStroke(1.dp, Color.LightGray),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     ListItem(
-                        headlineContent = { Text(item.first, fontWeight = FontWeight.Bold) },
-                        supportingContent = { Text("${item.second}\n${item.third}") },
+                        headlineContent = { Text(item.first, fontWeight = FontWeight.Bold, color = Color.Black) },
+                        supportingContent = { Text("${item.second}\n${item.third}", color = Color.Black) },
                         leadingContent = { 
-                            Box(Modifier.size(40.dp).background(GreenLight, CircleShape), contentAlignment = Alignment.Center) {
+                            Box(
+                                Modifier.size(44.dp).background(Color.White, CircleShape).border(1.dp, GreenPrimary, CircleShape), 
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Icon(Icons.Default.Info, contentDescription = null, tint = GreenPrimary)
                             }
-                        }
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.White)
                     )
                 }
             }
@@ -391,31 +439,39 @@ fun ServicesScreen(navController: NavController) {
 @Composable
 fun MyAppointmentsScreen(navController: NavController) {
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.my_schedules_title), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.my_schedules_title), fontWeight = FontWeight.Bold, color = Color.Black) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.Black)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp)) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                border = CardDefaults.outlinedCardBorder()
+                border = BorderStroke(1.dp, Color.LightGray),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("João da Silva", fontWeight = FontWeight.Bold)
-                    Text("Cartão SUS: 123 4567 8901 2345", fontSize = 12.sp, color = Color.Gray)
-                    HorizontalDivider(Modifier.padding(vertical = 8.dp))
-                    Text("Serviço: Clínico Geral", fontWeight = FontWeight.Medium)
-                    Text("Data: 20/10/2026 - 09:00")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Ver detalhes", color = GreenPrimary, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.End))
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Text("João da Silva", fontWeight = FontWeight.Bold, color = Color.Black)
+                    Text("Cartão SUS: 123 4567 8901 2345", fontSize = 12.sp, color = Color.Black)
+                    HorizontalDivider(Modifier.padding(vertical = 12.dp), color = Color.LightGray)
+                    Text("Clínico Geral", fontWeight = FontWeight.Medium, color = Color.Black, fontSize = 16.sp)
+                    Text("Agendado para: 20/10/2026 - 09:00", color = Color.Black, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        "Ver detalhes", 
+                        color = GreenPrimary, 
+                        fontWeight = FontWeight.Bold, 
+                        modifier = Modifier.align(Alignment.End).clickable { /* Detalhes */ }
+                    )
                 }
             }
             
@@ -424,10 +480,11 @@ fun MyAppointmentsScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate("agendamento") },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                shape = RoundedCornerShape(12.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = GreenLight, contentColor = Color.Black),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, GreenPrimary)
             ) {
-                Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold, color = Color.Black)
             }
         }
     }
@@ -438,16 +495,20 @@ fun MyAppointmentsScreen(navController: NavController) {
 @Composable
 fun ProfileScreen(navController: NavController) {
     Scaffold(
+        containerColor = Color.White,
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.btn_profile), fontWeight = FontWeight.Bold) })
+            TopAppBar(
+                title = { Text(stringResource(R.string.btn_profile), fontWeight = FontWeight.Bold, color = Color.Black) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+            )
         }
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier.size(120.dp).background(GreenLight, CircleShape),
+                modifier = Modifier.size(120.dp).background(Color.White, CircleShape).border(2.dp, GreenPrimary, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(80.dp), tint = GreenPrimary)
@@ -455,19 +516,21 @@ fun ProfileScreen(navController: NavController) {
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            Text("João da Silva", fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text("Cartão SUS: 123 4567 8901 2345", color = Color.Gray)
+            Text("João da Silva", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            Text("Cartão SUS: 123 4567 8901 2345", color = Color.Black, fontSize = 16.sp)
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                border = CardDefaults.outlinedCardBorder()
+                border = BorderStroke(1.dp, Color.LightGray),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(20.dp)) {
                     Text("Último agendamento", fontWeight = FontWeight.Bold, color = GreenPrimary)
-                    Text("Clínico Geral - 10/09/2026")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Clínico Geral - 12/10/2026", color = Color.Black, fontSize = 16.sp)
                 }
             }
         }
@@ -479,18 +542,23 @@ fun ProfileScreen(navController: NavController) {
 @Composable
 fun AccessibilityScreen(navController: NavController) {
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.btn_accessibility), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.btn_accessibility), fontWeight = FontWeight.Bold, color = Color.Black) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.Black)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp), 
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             AccessibilityOption(text = "Texto ampliado", icon = Icons.Default.Edit)
             AccessibilityOption(text = "Alto contraste", icon = Icons.Default.Star)
         }
@@ -500,27 +568,28 @@ fun AccessibilityScreen(navController: NavController) {
 @Composable
 fun AccessibilityOption(text: String, icon: ImageVector) {
     Surface(
-        modifier = Modifier.fillMaxWidth().height(70.dp),
-        color = GreenLight,
-        shape = RoundedCornerShape(12.dp)
+        modifier = Modifier.fillMaxWidth().height(72.dp),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, Color.LightGray)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(icon, contentDescription = null, tint = GreenPrimary)
             Spacer(modifier = Modifier.width(16.dp))
-            Text(text, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-            Switch(checked = false, onCheckedChange = {})
+            Text(text, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.weight(1f), color = Color.Black)
+            Switch(checked = false, onCheckedChange = {}, colors = SwitchDefaults.colors(checkedThumbColor = GreenPrimary))
         }
     }
 }
 
-// --- COMPONENTES DE NAVEGAÇÃO ---
+// --- NAVEGAÇÃO ---
 
 @Composable
 fun UBSBottomNavigation(navController: NavController, currentRoute: String?) {
-    NavigationBar(containerColor = Color.White, tonalElevation = 8.dp) {
+    NavigationBar(containerColor = Color.White, tonalElevation = 0.dp) {
         val items = listOf(
             Triple("home", stringResource(R.string.nav_home), Icons.Default.Home),
             Triple("meus_agendamentos", stringResource(R.string.nav_schedules), Icons.Default.DateRange),
@@ -531,7 +600,7 @@ fun UBSBottomNavigation(navController: NavController, currentRoute: String?) {
         items.forEach { (route, label, icon) ->
             NavigationBarItem(
                 icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label, fontSize = 10.sp) },
+                label = { Text(label, fontSize = 10.sp, color = Color.Black) },
                 selected = currentRoute == route,
                 onClick = {
                     if (currentRoute != route) {
@@ -544,8 +613,10 @@ fun UBSBottomNavigation(navController: NavController, currentRoute: String?) {
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = GreenPrimary,
-                    selectedTextColor = GreenPrimary,
-                    indicatorColor = GreenLight
+                    unselectedIconColor = Color.Black,
+                    selectedTextColor = Color.Black,
+                    unselectedTextColor = Color.Black,
+                    indicatorColor = Color.Transparent
                 )
             )
         }
@@ -556,34 +627,39 @@ fun UBSBottomNavigation(navController: NavController, currentRoute: String?) {
 fun UBSDrawerContent(navController: NavController, onClose: () -> Unit) {
     ModalDrawerSheet(drawerContainerColor = Color.White) {
         Box(
-            modifier = Modifier.fillMaxWidth().background(GreenPrimary).padding(24.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(24.dp)
         ) {
             Column {
                 Image(
                     painter = painterResource(id = R.drawable.logo_ubs),
-                    contentDescription = null,
-                    modifier = Modifier.height(40.dp).clip(RoundedCornerShape(4.dp)).background(Color.White.copy(alpha = 0.9f))
+                    contentDescription = "Logo UBS+",
+                    modifier = Modifier.height(44.dp).background(Color.White)
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text("Menu UBS+", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Menu UBS+", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                HorizontalDivider(color = GreenPrimary, thickness = 3.dp, modifier = Modifier.fillMaxWidth(0.2f))
             }
         }
         
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         
+        DrawerItem("Início", Icons.Default.Home) { navController.navigate("home"); onClose() }
         DrawerItem("Agendar Consulta", Icons.Default.AddCircle) { navController.navigate("agendamento"); onClose() }
         DrawerItem("Meus Agendamentos", Icons.Default.DateRange) { navController.navigate("meus_agendamentos"); onClose() }
-        DrawerItem("Serviços e Horários", Icons.AutoMirrored.Filled.List) { navController.navigate("servicos"); onClose() }
-        DrawerItem("Acessibilidade", Icons.Default.Settings) { navController.navigate("acessibilidade"); onClose() }
+        DrawerItem("Serviços", Icons.AutoMirrored.Filled.List) { navController.navigate("servicos"); onClose() }
         DrawerItem("Perfil", Icons.Default.Person) { navController.navigate("perfil"); onClose() }
+        DrawerItem("Acessibilidade", Icons.Default.Settings) { navController.navigate("acessibilidade"); onClose() }
         
         Spacer(modifier = Modifier.weight(1f))
         
         Text(
-            "Versão do Protótipo 2.0",
-            modifier = Modifier.padding(16.dp),
+            "Protótipo v2.0 - Grupo Apollo",
+            modifier = Modifier.padding(24.dp),
             fontSize = 12.sp,
-            color = Color.Gray
+            color = Color.Black
         )
     }
 }
@@ -591,33 +667,11 @@ fun UBSDrawerContent(navController: NavController, onClose: () -> Unit) {
 @Composable
 fun DrawerItem(label: String, icon: ImageVector, onClick: () -> Unit) {
     NavigationDrawerItem(
-        label = { Text(label, fontWeight = FontWeight.Medium) },
+        label = { Text(label, fontWeight = FontWeight.Medium, color = Color.Black, fontSize = 16.sp) },
         selected = false,
         onClick = onClick,
         icon = { Icon(icon, contentDescription = null, tint = GreenPrimary) },
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
     )
-}
-
-// --- TELA DE VACINAS (MANTIDA DO PROTÓTIPO ANTERIOR) ---
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun VaccinesScreen(navController: NavController) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.vaccines_title)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Mural de Vacinas (Desativado no novo design)", color = Color.Gray)
-        }
-    }
 }
