@@ -1,4 +1,8 @@
-# 📄 PRD — Documento de Requisitos do Produto
+# Rascunho histórico do PRD
+
+Este arquivo preserva a primeira versão do modelo de requisitos. Ele contém campos e decisões que não refletem o estado atual do protótipo. Para requisitos revisados, consulte o [PRD vigente](../PRD.md).
+
+---
 
 > **O que é um PRD?** É o documento que responde **o quê** o app faz e **por quê** — não *como* ele é programado.
 > Quem lê o PRD deve conseguir entender o app inteiro sem abrir o código.
