@@ -19,16 +19,6 @@ data class Cadastro(
 )
 
 @Entity
-data class Agendamento(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val nome: String,
-    val data: String,
-    val cartaoSUS: String,
-    val horario: String,
-    val servico: String
-)
-
-@Entity
 data class Servico(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nome: String,
