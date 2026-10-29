@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.ViewModelProvider
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -25,19 +26,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val agendamentoViewModel =
+            ViewModelProvider(this)[AgendamentoViewModel::class.java]
         setContent {
             UBSTheme {
-                UBSAppContent()
+                UBSAppContent(agendamentoViewModel)
             }
         }
     }
 }
 
 @Composable
-fun UBSAppContent() {
+fun UBSAppContent(agendamentoViewModel: AgendamentoViewModel) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val agendamentos by agendamentoViewModel.agendamentos.collectAsState()
+    val erroAoCarregar by agendamentoViewModel.erroAoCarregar.collectAsState()
+    val carregando by agendamentoViewModel.carregando.collectAsState()
+    val salvando by agendamentoViewModel.salvando.collectAsState()
+    val ultimoAgendamento by agendamentoViewModel.ultimoAgendamento.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -66,19 +74,30 @@ fun UBSAppContent() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable("home") { 
-                    HomeScreen(navController, onOpenDrawer = { scope.launch { drawerState.open() } }) 
+                    HomeScreen(
+                        navController,
+                        agendamentos,
+                        carregando,
+                        erroAoCarregar,
+                        onOpenDrawer = { scope.launch { drawerState.open() } }
+                    )
                 }
                 composable("agendamento") { 
-                    ScheduleScreen(navController) 
+                    ScheduleScreen(navController, agendamentoViewModel, salvando)
                 }
                 composable("confirmacao") { 
-                    ConfirmationScreen(navController) 
+                    ConfirmationScreen(navController, ultimoAgendamento)
                 }
                 composable("servicos") { 
                     ServicesScreen(navController) 
                 }
                 composable("meus_agendamentos") { 
-                    MyAppointmentsScreen(navController) 
+                    MyAppointmentsScreen(
+                        navController,
+                        agendamentos,
+                        carregando,
+                        erroAoCarregar
+                    )
                 }
                 composable("perfil") { 
                     ProfileScreen(navController) 
