@@ -24,6 +24,17 @@
     <string name="btn_confirm_schedule">Confirmar agendamento</string>
     <string name="schedule_description">Preencha os dados abaixo para marcar sua consulta na UBS de Água Preta.</string>
     <string name="error_empty_fields">Por favor, preencha todos os campos corretamente para realizar o agendamento.</string>
+    <string name="error_saving_appointment">Não foi possível salvar o agendamento. Tente novamente.</string>
+    <string name="error_loading_appointments">Não foi possível carregar os agendamentos. Tente novamente mais tarde.</string>
+    <string name="loading_appointments">Carregando agendamentos...</string>
+    <string name="confirmation_service">Serviço: %1$s</string>
+    <string name="confirmation_date">Data: %1$s</string>
+    <string name="confirmation_time">Horário: %1$s</string>
+    <string name="appointment_patient">Paciente: %1$s</string>
+    <string name="appointment_service">Serviço: %1$s</string>
+    <string name="appointment_sus">Cartão SUS: %1$s</string>
+    <string name="appointment_date_time">Agendado para: %1$s - %2$s</string>
+    <string name="appointment_saving">Salvando...</string>
 
     <!-- Success Screen -->
     <string name="title_confirmed">Consulta agendada!</string>

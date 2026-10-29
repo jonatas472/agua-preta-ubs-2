@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.edu.ifpe.ubsaude.ui.theme.GreenLight
 import br.edu.ifpe.ubsaude.ui.theme.GreenPrimary
+import kotlinx.coroutines.flow.collect
 
 /**
  * Telas do Protótipo UBS+ v2 - Edição Final Strict (Fundo Branco / Letras Pretas)
@@ -45,7 +46,13 @@ import br.edu.ifpe.ubsaude.ui.theme.GreenPrimary
 // --- TELA PRINCIPAL (HOME) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
+fun HomeScreen(
+    navController: NavController,
+    agendamentos: List<Agendamento>,
+    carregando: Boolean,
+    erroAoCarregar: Boolean,
+    onOpenDrawer: () -> Unit
+) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -84,7 +91,7 @@ fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Card de Próximo Agendamento
-            NextAppointmentCard()
+            NextAppointmentCard(agendamentos.firstOrNull(), carregando, erroAoCarregar)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -126,7 +133,11 @@ fun HomeScreen(navController: NavController, onOpenDrawer: () -> Unit) {
 }
 
 @Composable
-fun NextAppointmentCard() {
+fun NextAppointmentCard(
+    agendamento: Agendamento?,
+    carregando: Boolean,
+    erroAoCarregar: Boolean
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -144,12 +155,32 @@ fun NextAppointmentCard() {
                 Icon(Icons.Default.DateRange, contentDescription = null, tint = GreenPrimary)
             }
             Spacer(modifier = Modifier.height(12.dp))
-            Text("Paciente: João da Silva", color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text("Registro: 12/10/2026", color = Color.Black, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Sem agendamento marcado", color = Color.Black, fontSize = 14.sp, modifier = Modifier.weight(1f))
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = GreenPrimary)
+            when {
+                carregando -> Text(stringResource(R.string.loading_appointments), color = Color.Black)
+                erroAoCarregar -> Text(stringResource(R.string.error_loading_appointments), color = Color.Black)
+                agendamento == null -> Text(
+                    stringResource(R.string.no_schedules),
+                    color = Color.Black,
+                    fontSize = 14.sp
+                )
+                else -> {
+                    Text(
+                        stringResource(R.string.appointment_patient, agendamento.nome),
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        stringResource(R.string.appointment_service, agendamento.servico),
+                        color = Color.Black,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        stringResource(R.string.appointment_date_time, agendamento.data, agendamento.horario),
+                        color = Color.Black,
+                        fontSize = 14.sp
+                    )
+                }
             }
         }
     }
@@ -199,15 +230,34 @@ fun ActionButtonSmall(text: String, icon: ImageVector, modifier: Modifier, onCli
 // --- TELA DE AGENDAMENTO ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleScreen(navController: NavController) {
+fun ScheduleScreen(
+    navController: NavController,
+    agendamentoViewModel: AgendamentoViewModel,
+    salvando: Boolean
+) {
     var nome by remember { mutableStateOf("") }
     var sus by remember { mutableStateOf("") }
     var data by remember { mutableStateOf("") }
     var hora by remember { mutableStateOf("") }
     var servico by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    LaunchedEffect(agendamentoViewModel) {
+        agendamentoViewModel.resultadoSalvamento.collect { resultado ->
+            when (resultado) {
+                ResultadoAgendamento.SALVO -> navController.navigate("confirmacao")
+                ResultadoAgendamento.CAMPOS_OBRIGATORIOS ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_empty_fields))
+                ResultadoAgendamento.ERRO_AO_SALVAR ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_saving_appointment))
+            }
+        }
+    }
 
     Scaffold(
         containerColor = Color.White,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold, color = Color.Black) },
@@ -306,13 +356,30 @@ fun ScheduleScreen(navController: NavController) {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { navController.navigate("confirmacao") },
+                onClick = {
+                    agendamentoViewModel.salvar(
+                        Agendamento(
+                            nome = nome.trim(),
+                            data = data.trim(),
+                            cartaoSUS = sus.trim(),
+                            horario = hora.trim(),
+                            servico = servico.trim()
+                        )
+                    )
+                },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = GreenLight),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, GreenPrimary)
+                border = BorderStroke(1.dp, GreenPrimary),
+                enabled = !salvando
             ) {
-                Text(stringResource(R.string.btn_confirm_schedule), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                Text(
+                    if (salvando) stringResource(R.string.appointment_saving)
+                    else stringResource(R.string.btn_confirm_schedule),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
             }
         }
     }
@@ -320,7 +387,7 @@ fun ScheduleScreen(navController: NavController) {
 
 // --- TELA DE CONFIRMAÇÃO ---
 @Composable
-fun ConfirmationScreen(navController: NavController) {
+fun ConfirmationScreen(navController: NavController, agendamento: Agendamento?) {
     Column(
         modifier = Modifier.fillMaxSize().background(Color.White).padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -357,11 +424,25 @@ fun ConfirmationScreen(navController: NavController) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(stringResource(R.string.card_summary), fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 18.sp)
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color.LightGray)
-                Text("Serviço: Clínico Geral", color = Color.Black, fontSize = 16.sp)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Data: 20/Out/2026", color = Color.Black, fontSize = 16.sp)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Unidade: UBS Água Preta", color = Color.Black, fontSize = 16.sp)
+                if (agendamento != null) {
+                    Text(
+                        stringResource(R.string.confirmation_service, agendamento.servico),
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.confirmation_date, agendamento.data),
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.confirmation_time, agendamento.horario),
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
         
@@ -437,7 +518,12 @@ fun ServicesScreen(navController: NavController) {
 // --- TELA MEUS AGENDAMENTOS ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyAppointmentsScreen(navController: NavController) {
+fun MyAppointmentsScreen(
+    navController: NavController,
+    agendamentos: List<Agendamento>,
+    carregando: Boolean,
+    erroAoCarregar: Boolean
+) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -452,31 +538,72 @@ fun MyAppointmentsScreen(navController: NavController) {
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp)) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                border = BorderStroke(1.dp, Color.LightGray),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text("João da Silva", fontWeight = FontWeight.Bold, color = Color.Black)
-                    Text("Cartão SUS: 123 4567 8901 2345", fontSize = 12.sp, color = Color.Black)
-                    HorizontalDivider(Modifier.padding(vertical = 12.dp), color = Color.LightGray)
-                    Text("Clínico Geral", fontWeight = FontWeight.Medium, color = Color.Black, fontSize = 16.sp)
-                    Text("Agendado para: 20/10/2026 - 09:00", color = Color.Black, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        "Ver detalhes", 
-                        color = GreenPrimary, 
-                        fontWeight = FontWeight.Bold, 
-                        modifier = Modifier.align(Alignment.End).clickable { /* Detalhes */ }
-                    )
+        Column(
+            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp)
+        ) {
+            when {
+                carregando -> Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(stringResource(R.string.loading_appointments), color = Color.Black)
+                }
+                erroAoCarregar -> Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(stringResource(R.string.error_loading_appointments), color = Color.Black)
+                }
+                agendamentos.isEmpty() -> Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(stringResource(R.string.no_schedules), color = Color.Black)
+                }
+                else -> LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(agendamentos, key = { it.id }) { agendamento ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color.LightGray),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(20.dp)) {
+                                Text(
+                                    stringResource(R.string.appointment_patient, agendamento.nome),
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    stringResource(R.string.appointment_sus, agendamento.cartaoSUS),
+                                    fontSize = 12.sp,
+                                    color = Color.Black
+                                )
+                                HorizontalDivider(Modifier.padding(vertical = 12.dp), color = Color.LightGray)
+                                Text(
+                                    stringResource(R.string.appointment_service, agendamento.servico),
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black,
+                                    fontSize = 16.sp
+                                )
+                                Text(
+                                    stringResource(
+                                        R.string.appointment_date_time,
+                                        agendamento.data,
+                                        agendamento.horario
+                                    ),
+                                    color = Color.Black,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
                 }
             }
-            
-            Spacer(modifier = Modifier.weight(1f))
-            
+
             Button(
                 onClick = { navController.navigate("agendamento") },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
