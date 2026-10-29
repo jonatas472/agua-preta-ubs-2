@@ -44,6 +44,9 @@
 
     <!-- Services Screen -->
     <string name="services_title">Serviços e horários</string>
+    <string name="loading_services">Carregando serviços...</string>
+    <string name="error_loading_services">Não foi possível carregar os serviços. Tente novamente mais tarde.</string>
+    <string name="no_services">Nenhum serviço disponível.</string>
 
     <!-- Vaccines Screen -->
     <string name="vaccines_title">Mural: Verdade ou Mito</string>

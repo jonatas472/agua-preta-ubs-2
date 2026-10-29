@@ -28,16 +28,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val agendamentoViewModel =
             ViewModelProvider(this)[AgendamentoViewModel::class.java]
+        val servicoViewModel =
+            ViewModelProvider(this)[ServicoViewModel::class.java]
         setContent {
             UBSTheme {
-                UBSAppContent(agendamentoViewModel)
+                UBSAppContent(agendamentoViewModel, servicoViewModel)
             }
         }
     }
 }
 
 @Composable
-fun UBSAppContent(agendamentoViewModel: AgendamentoViewModel) {
+fun UBSAppContent(
+    agendamentoViewModel: AgendamentoViewModel,
+    servicoViewModel: ServicoViewModel
+) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -46,6 +51,9 @@ fun UBSAppContent(agendamentoViewModel: AgendamentoViewModel) {
     val carregando by agendamentoViewModel.carregando.collectAsState()
     val salvando by agendamentoViewModel.salvando.collectAsState()
     val ultimoAgendamento by agendamentoViewModel.ultimoAgendamento.collectAsState()
+    val servicos by servicoViewModel.servicos.collectAsState()
+    val erroAoCarregarServicos by servicoViewModel.erroAoCarregar.collectAsState()
+    val carregandoServicos by servicoViewModel.carregando.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -88,8 +96,13 @@ fun UBSAppContent(agendamentoViewModel: AgendamentoViewModel) {
                 composable("confirmacao") { 
                     ConfirmationScreen(navController, ultimoAgendamento)
                 }
-                composable("servicos") { 
-                    ServicesScreen(navController) 
+                composable("servicos") {
+                    ServicesScreen(
+                        navController,
+                        servicos,
+                        carregandoServicos,
+                        erroAoCarregarServicos
+                    )
                 }
                 composable("meus_agendamentos") { 
                     MyAppointmentsScreen(
