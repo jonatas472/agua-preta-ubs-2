@@ -463,14 +463,12 @@ fun ConfirmationScreen(navController: NavController, agendamento: Agendamento?) 
 // --- TELA DE SERVIÇOS ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ServicesScreen(navController: NavController) {
-    val servicos = listOf(
-        Triple("Clínico Geral", "Segunda a Sexta", "08h às 17h"),
-        Triple("Odontologia", "Terça e Quinta", "09h às 16h"),
-        Triple("Vacinação", "Segunda a Sexta", "08h às 17h"),
-        Triple("Pré-Natal", "Quarta-feira", "08h às 12h")
-    )
-
+fun ServicesScreen(
+    navController: NavController,
+    servicos: List<Servico>,
+    carregando: Boolean,
+    erroAoCarregar: Boolean
+) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -489,26 +487,43 @@ fun ServicesScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp), 
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(servicos) { item ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    border = BorderStroke(1.dp, Color.LightGray),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    ListItem(
-                        headlineContent = { Text(item.first, fontWeight = FontWeight.Bold, color = Color.Black) },
-                        supportingContent = { Text("${item.second}\n${item.third}", color = Color.Black) },
-                        leadingContent = { 
-                            Box(
-                                Modifier.size(44.dp).background(Color.White, CircleShape).border(1.dp, GreenPrimary, CircleShape), 
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Info, contentDescription = null, tint = GreenPrimary)
-                            }
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.White)
-                    )
+            when {
+                carregando -> item {
+                    Text(stringResource(R.string.loading_services), color = Color.Black)
+                }
+                erroAoCarregar -> item {
+                    Text(stringResource(R.string.error_loading_services), color = Color.Black)
+                }
+                servicos.isEmpty() -> item {
+                    Text(stringResource(R.string.no_services), color = Color.Black)
+                }
+                else -> items(servicos) { item ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        border = BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        ListItem(
+                            headlineContent = {
+                                Text(item.nome, fontWeight = FontWeight.Bold, color = Color.Black)
+                            },
+                            supportingContent = {
+                                Text("${item.descricao}\n${item.horario}", color = Color.Black)
+                            },
+                            leadingContent = {
+                                Box(
+                                    Modifier.size(44.dp)
+                                        .background(Color.White, CircleShape)
+                                        .border(1.dp, GreenPrimary, CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(Icons.Default.Info, contentDescription = null, tint = GreenPrimary)
+                                }
+                            },
+                            colors = ListItemDefaults.colors(containerColor = Color.White)
+                        )
+                    }
                 }
             }
         }
