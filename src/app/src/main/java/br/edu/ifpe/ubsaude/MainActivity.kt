@@ -4,13 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.lifecycle.ViewModelProvider
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -18,18 +30,27 @@ import androidx.navigation.compose.rememberNavController
 import br.edu.ifpe.ubsaude.ui.theme.UBSTheme
 import kotlinx.coroutines.launch
 
-/**
- * Ponto de entrada do UBS+ Protótipo V2.
- * Configurado para Fundo Branco e Alto Contraste.
- */
+/** Ponto de entrada do aplicativo UBS+. */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val database = AppDatabase.getDatabase(this)
+        val repository = AgendamentoRepository(database.agendamentoDao())
+        val factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(AgendamentoViewModel::class.java)) {
+                    return AgendamentoViewModel(repository) as T
+                }
+                throw IllegalArgumentException("ViewModel não reconhecido: ${modelClass.name}")
+            }
+        }
         val agendamentoViewModel =
-            ViewModelProvider(this)[AgendamentoViewModel::class.java]
-        val servicoViewModel =
-            ViewModelProvider(this)[ServicoViewModel::class.java]
+            ViewModelProvider(this, factory)[AgendamentoViewModel::class.java]
+        val servicoViewModel = ViewModelProvider(this)[ServicoViewModel::class.java]
+
         setContent {
             UBSTheme {
                 UBSAppContent(agendamentoViewModel, servicoViewModel)
@@ -47,76 +68,94 @@ fun UBSAppContent(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val agendamentos by agendamentoViewModel.agendamentos.collectAsState()
-    val erroAoCarregar by agendamentoViewModel.erroAoCarregar.collectAsState()
-    val carregando by agendamentoViewModel.carregando.collectAsState()
-    val salvando by agendamentoViewModel.salvando.collectAsState()
-    val ultimoAgendamento by agendamentoViewModel.ultimoAgendamento.collectAsState()
+    val erroAoCarregarAgendamentos by agendamentoViewModel.erroAoCarregar.collectAsState()
+    val carregandoAgendamentos by agendamentoViewModel.carregando.collectAsState()
     val servicos by servicoViewModel.servicos.collectAsState()
     val erroAoCarregarServicos by servicoViewModel.erroAoCarregar.collectAsState()
     val carregandoServicos by servicoViewModel.carregando.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    var enlargedText by rememberSaveable { mutableStateOf(false) }
+    var highContrast by rememberSaveable { mutableStateOf(false) }
+    val density = LocalDensity.current
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            UBSDrawerContent(
-                navController = navController,
-                onClose = { scope.launch { drawerState.close() } }
-            )
-        }
+    CompositionLocalProvider(
+        LocalAccessibilityPreferences provides AccessibilityPreferences(enlargedText, highContrast),
+        LocalDensity provides androidx.compose.ui.unit.Density(
+            density.density,
+            density.fontScale * if (enlargedText) 1.2f else 1f
+        )
     ) {
-        // Scaffold configurado com fundo branco absoluto
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = Color.White,
-            bottomBar = {
-                if (currentRoute != "confirmacao") {
-                    UBSBottomNavigation(navController, currentRoute)
-                }
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                UBSDrawerContent(
+                    navController = navController,
+                    onClose = { scope.launch { drawerState.close() } }
+                )
             }
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "home",
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable("home") { 
-                    HomeScreen(
-                        navController,
-                        agendamentos,
-                        carregando,
-                        erroAoCarregar,
-                        onOpenDrawer = { scope.launch { drawerState.open() } }
-                    )
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.White,
+                bottomBar = {
+                    if (currentRoute != "confirmacao") UBSBottomNavigation(navController, currentRoute)
                 }
-                composable("agendamento") { 
-                    ScheduleScreen(navController, agendamentoViewModel, salvando)
-                }
-                composable("confirmacao") { 
-                    ConfirmationScreen(navController, ultimoAgendamento)
-                }
-                composable("servicos") {
-                    ServicesScreen(
-                        navController,
-                        servicos,
-                        carregandoServicos,
-                        erroAoCarregarServicos
-                    )
-                }
-                composable("meus_agendamentos") { 
-                    MyAppointmentsScreen(
-                        navController,
-                        agendamentos,
-                        carregando,
-                        erroAoCarregar
-                    )
-                }
-                composable("perfil") { 
-                    ProfileScreen(navController) 
-                }
-                composable("acessibilidade") { 
-                    AccessibilityScreen(navController) 
+            ) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = "home",
+                    modifier = Modifier.padding(innerPadding)
+                ) {
+                    composable("home") {
+                        HomeScreen(
+                            navController = navController,
+                            agendamentos = agendamentos,
+                            carregando = carregandoAgendamentos,
+                            erroAoCarregar = erroAoCarregarAgendamentos,
+                            onOpenDrawer = { scope.launch { drawerState.open() } }
+                        )
+                    }
+                    composable("agendamento") {
+                        ScheduleScreen(
+                            navController = navController,
+                            agendamentoViewModel = agendamentoViewModel,
+                            servicos = servicos,
+                            carregandoServicos = carregandoServicos,
+                            erroAoCarregarServicos = erroAoCarregarServicos
+                        )
+                    }
+                    composable("confirmacao") {
+                        ConfirmationScreen(navController, agendamentoViewModel)
+                    }
+                    composable("servicos") {
+                        ServicesScreen(
+                            navController,
+                            servicos,
+                            carregandoServicos,
+                            erroAoCarregarServicos
+                        )
+                    }
+                    composable("meus_agendamentos") {
+                        MyAppointmentsScreen(
+                            navController,
+                            agendamentos,
+                            carregandoAgendamentos,
+                            erroAoCarregarAgendamentos
+                        )
+                    }
+                    composable("perfil") {
+                        ProfileScreen(navController, agendamentos.firstOrNull())
+                    }
+                    composable("acessibilidade") {
+                        AccessibilityScreen(
+                            navController,
+                            enlargedText,
+                            { enlargedText = it },
+                            highContrast,
+                            { highContrast = it }
+                        )
+                    }
                 }
             }
         }

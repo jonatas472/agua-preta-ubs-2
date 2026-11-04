@@ -1,4 +1,4 @@
-package br.edu.ifpe.ubsaude
+﻿package br.edu.ifpe.ubsaude
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -8,8 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -25,13 +28,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import br.edu.ifpe.ubsaude.ui.theme.GreenLight
-import br.edu.ifpe.ubsaude.ui.theme.GreenPrimary
 import kotlinx.coroutines.flow.collect
+
 
 /**
  * Telas do Protótipo UBS+ v2 - Edição Final Strict (Fundo Branco / Letras Pretas)
@@ -142,7 +145,7 @@ fun NextAppointmentCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(2.dp, GreenPrimary)
+        border = BorderStroke(2.dp, accessiblePrimaryColor())
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -152,7 +155,7 @@ fun NextAppointmentCard(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
-                Icon(Icons.Default.DateRange, contentDescription = null, tint = GreenPrimary)
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = accessiblePrimaryColor())
             }
             Spacer(modifier = Modifier.height(12.dp))
             when {
@@ -191,14 +194,14 @@ fun ActionButtonBig(text: String, icon: ImageVector, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().height(84.dp),
-        color = GreenLight,
+        color = accessibleButtonColor(),
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically, 
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = GreenPrimary)
+            Icon(icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = accessiblePrimaryColor())
             Spacer(modifier = Modifier.width(16.dp))
             Text(text, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black, modifier = Modifier.weight(1f))
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.Black)
@@ -220,7 +223,7 @@ fun ActionButtonSmall(text: String, icon: ImageVector, modifier: Modifier, onCli
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-            Icon(icon, contentDescription = null, tint = GreenPrimary, modifier = Modifier.size(28.dp))
+            Icon(icon, contentDescription = null, tint = accessiblePrimaryColor(), modifier = Modifier.size(28.dp))
             Spacer(modifier = Modifier.height(12.dp))
             Text(text, fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 18.sp, color = Color.Black)
         }
@@ -233,31 +236,31 @@ fun ActionButtonSmall(text: String, icon: ImageVector, modifier: Modifier, onCli
 fun ScheduleScreen(
     navController: NavController,
     agendamentoViewModel: AgendamentoViewModel,
-    salvando: Boolean
+    servicos: List<Servico>,
+    carregandoServicos: Boolean,
+    erroAoCarregarServicos: Boolean
 ) {
     var nome by remember { mutableStateOf("") }
     var sus by remember { mutableStateOf("") }
     var data by remember { mutableStateOf("") }
     var hora by remember { mutableStateOf("") }
     var servico by remember { mutableStateOf("") }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val context = androidx.compose.ui.platform.LocalContext.current
+    var menuServicosAberto by remember { mutableStateOf(false) }
+    val estado by agendamentoViewModel.estado.collectAsState()
 
     LaunchedEffect(agendamentoViewModel) {
-        agendamentoViewModel.resultadoSalvamento.collect { resultado ->
-            when (resultado) {
-                ResultadoAgendamento.SALVO -> navController.navigate("confirmacao")
-                ResultadoAgendamento.CAMPOS_OBRIGATORIOS ->
-                    snackbarHostState.showSnackbar(context.getString(R.string.error_empty_fields))
-                ResultadoAgendamento.ERRO_AO_SALVAR ->
-                    snackbarHostState.showSnackbar(context.getString(R.string.error_saving_appointment))
+        agendamentoViewModel.limparResultado()
+        agendamentoViewModel.estado.collect { resultado ->
+            if (resultado.agendamentoSalvo != null) {
+                navController.navigate("confirmacao") {
+                    launchSingleTop = true
+                }
             }
         }
     }
 
     Scaffold(
         containerColor = Color.White,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold, color = Color.Black) },
@@ -271,7 +274,8 @@ fun ScheduleScreen(
         }
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).background(Color.White)
+                .verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(stringResource(R.string.schedule_description), color = Color.Black)
@@ -279,102 +283,144 @@ fun ScheduleScreen(
             OutlinedTextField(
                 value = nome, onValueChange = { nome = it },
                 label = { Text(stringResource(R.string.label_name), color = Color.Black) },
-                placeholder = { Text("Ex: João da Silva") },
+                placeholder = { Text(stringResource(R.string.placeholder_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black,
-                    focusedBorderColor = GreenPrimary,
+                    focusedBorderColor = accessiblePrimaryColor(),
                     unfocusedBorderColor = Color.LightGray,
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Black
                 ),
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = GreenPrimary) }
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = accessiblePrimaryColor()) }
             )
             
             OutlinedTextField(
-                value = sus, onValueChange = { sus = it },
+                value = sus, onValueChange = { sus = it.filter(Char::isDigit).take(15) },
                 label = { Text(stringResource(R.string.label_sus), color = Color.Black) },
-                placeholder = { Text("000 0000 0000 0000") },
+                placeholder = { Text(stringResource(R.string.placeholder_sus)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.Black, 
                     unfocusedTextColor = Color.Black,
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Black
                 ),
-                leadingIcon = { Icon(Icons.Default.AccountBox, contentDescription = null, tint = GreenPrimary) }
+                leadingIcon = { Icon(Icons.Default.AccountBox, contentDescription = null, tint = accessiblePrimaryColor()) }
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
-                    value = data, onValueChange = { data = it },
+                    value = data, onValueChange = { data = AgendamentoValidation.formatarData(it) },
                     label = { Text(stringResource(R.string.label_date), color = Color.Black) },
-                    placeholder = { Text("DD/MM/AAAA") },
+                    placeholder = { Text(stringResource(R.string.placeholder_date)) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.Black, 
                         unfocusedTextColor = Color.Black,
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Black
                     ),
-                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null, tint = GreenPrimary) }
+                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null, tint = accessiblePrimaryColor()) }
                 )
                 OutlinedTextField(
-                    value = hora, onValueChange = { hora = it },
+                    value = hora, onValueChange = { hora = AgendamentoValidation.formatarHorario(it) },
                     label = { Text(stringResource(R.string.label_time), color = Color.Black) },
-                    placeholder = { Text("00:00") },
+                    placeholder = { Text(stringResource(R.string.placeholder_time)) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.Black, 
                         unfocusedTextColor = Color.Black,
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Black
                     ),
-                    leadingIcon = { Icon(Icons.Default.Notifications, contentDescription = null, tint = GreenPrimary) }
+                    leadingIcon = { Icon(Icons.Default.Notifications, contentDescription = null, tint = accessiblePrimaryColor()) }
                 )
             }
 
-            OutlinedTextField(
-                value = servico, onValueChange = { servico = it },
-                label = { Text(stringResource(R.string.label_service), color = Color.Black) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.Black, 
-                    unfocusedTextColor = Color.Black,
-                    focusedLabelColor = Color.Black,
-                    unfocusedLabelColor = Color.Black
-                ),
-                leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = GreenPrimary) }
-            )
+            Box {
+                OutlinedTextField(
+                    value = servico,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.label_service), color = Color.Black) },
+                    modifier = Modifier.fillMaxWidth().clickable { menuServicosAberto = true },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedBorderColor = accessiblePrimaryColor(),
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Black
+                    ),
+                    leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = accessiblePrimaryColor()) },
+                    trailingIcon = {
+                        IconButton(onClick = { menuServicosAberto = true }) {
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(R.string.label_service))
+                        }
+                    }
+                )
+                DropdownMenu(
+                    expanded = menuServicosAberto,
+                    onDismissRequest = { menuServicosAberto = false }
+                ) {
+                    servicos.forEach { opcao ->
+                        DropdownMenuItem(
+                            text = { Text(opcao.nome) },
+                            onClick = {
+                                servico = opcao.nome
+                                menuServicosAberto = false
+                            }
+                        )
+                    }
+                }
+            }
 
-            Spacer(modifier = Modifier.weight(1f))
+            when {
+                carregandoServicos -> Text(stringResource(R.string.loading_services), color = Color.Black)
+                erroAoCarregarServicos -> Text(
+                    stringResource(R.string.error_loading_services),
+                    color = MaterialTheme.colorScheme.error
+                )
+                servicos.isEmpty() -> Text(stringResource(R.string.no_services), color = Color.Black)
+            }
+
+            estado.erroValidacao?.let {
+                Text(stringResource(it.recurso), color = MaterialTheme.colorScheme.error)
+            }
+            if (estado.erroAoSalvar) {
+                Text(stringResource(R.string.error_save_appointment), color = MaterialTheme.colorScheme.error)
+            }
 
             Button(
                 onClick = {
                     agendamentoViewModel.salvar(
                         Agendamento(
                             nome = nome.trim(),
-                            data = data.trim(),
-                            cartaoSUS = sus.trim(),
-                            horario = hora.trim(),
-                            servico = servico.trim()
-                        )
+                            data = data,
+                            cartaoSUS = sus,
+                            horario = hora,
+                            servico = servico
+                        ),
+                        servicos.map { it.nome }.toSet()
                     )
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = GreenLight),
+                colors = ButtonDefaults.buttonColors(containerColor = accessibleButtonColor()),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, GreenPrimary),
-                enabled = !salvando
+                border = BorderStroke(1.dp, accessiblePrimaryColor()),
+                enabled = !estado.salvando && !carregandoServicos && !erroAoCarregarServicos && servicos.isNotEmpty()
             ) {
                 Text(
-                    if (salvando) stringResource(R.string.appointment_saving)
+                    if (estado.salvando) stringResource(R.string.appointment_saving)
                     else stringResource(R.string.btn_confirm_schedule),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -387,17 +433,24 @@ fun ScheduleScreen(
 
 // --- TELA DE CONFIRMAÇÃO ---
 @Composable
-fun ConfirmationScreen(navController: NavController, agendamento: Agendamento?) {
+fun ConfirmationScreen(navController: NavController, viewModel: AgendamentoViewModel) {
+    val estado by viewModel.estado.collectAsState()
+    val agendamento = estado.agendamentoSalvo
+    androidx.activity.compose.BackHandler {
+        viewModel.limparResultado()
+        navController.popBackStack()
+    }
     Column(
         modifier = Modifier.fillMaxSize().background(Color.White).padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
-            modifier = Modifier.size(90.dp).background(Color.White, CircleShape).border(2.dp, GreenPrimary, CircleShape),
+            modifier = Modifier.size(90.dp).background(Color.White, CircleShape)
+                .border(2.dp, accessiblePrimaryColor(), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Check, contentDescription = null, tint = GreenPrimary, modifier = Modifier.size(54.dp))
+            Icon(Icons.Default.Check, contentDescription = null, tint = accessiblePrimaryColor(), modifier = Modifier.size(54.dp))
         }
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -426,6 +479,17 @@ fun ConfirmationScreen(navController: NavController, agendamento: Agendamento?) 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color.LightGray)
                 if (agendamento != null) {
                     Text(
+                        stringResource(R.string.appointment_patient, agendamento.nome),
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    )
+                    Text(
+                        stringResource(R.string.appointment_sus, agendamento.cartaoSUS),
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
                         stringResource(R.string.confirmation_service, agendamento.servico),
                         color = Color.Black,
                         fontSize = 16.sp
@@ -449,11 +513,14 @@ fun ConfirmationScreen(navController: NavController, agendamento: Agendamento?) 
         Spacer(modifier = Modifier.height(48.dp))
         
         Button(
-            onClick = { navController.navigate("home") { popUpTo("home") { inclusive = true } } },
+            onClick = {
+                viewModel.limparResultado()
+                navController.navigate("home") { popUpTo("home") { inclusive = true } }
+            },
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = GreenLight, contentColor = Color.Black),
+            colors = ButtonDefaults.buttonColors(containerColor = accessibleButtonColor(), contentColor = Color.Black),
             shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(1.dp, GreenPrimary)
+            border = BorderStroke(1.dp, accessiblePrimaryColor())
         ) {
             Text(stringResource(R.string.btn_back_home), fontWeight = FontWeight.Bold, color = Color.Black)
         }
@@ -515,10 +582,10 @@ fun ServicesScreen(
                                 Box(
                                     Modifier.size(44.dp)
                                         .background(Color.White, CircleShape)
-                                        .border(1.dp, GreenPrimary, CircleShape),
+                                        .border(1.dp, accessiblePrimaryColor(), CircleShape),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(Icons.Default.Info, contentDescription = null, tint = GreenPrimary)
+                                    Icon(Icons.Default.Info, contentDescription = null, tint = accessiblePrimaryColor())
                                 }
                             },
                             colors = ListItemDefaults.colors(containerColor = Color.White)
@@ -622,9 +689,9 @@ fun MyAppointmentsScreen(
             Button(
                 onClick = { navController.navigate("agendamento") },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = GreenLight, contentColor = Color.Black),
+                colors = ButtonDefaults.buttonColors(containerColor = accessibleButtonColor(), contentColor = Color.Black),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, GreenPrimary)
+                border = BorderStroke(1.dp, accessiblePrimaryColor())
             ) {
                 Text(stringResource(R.string.btn_schedule), fontWeight = FontWeight.Bold, color = Color.Black)
             }
@@ -635,12 +702,17 @@ fun MyAppointmentsScreen(
 // --- TELA DE PERFIL ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, ultimoAgendamento: Agendamento?) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.btn_profile), fontWeight = FontWeight.Bold, color = Color.Black) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.Black)
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
@@ -650,16 +722,19 @@ fun ProfileScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier.size(120.dp).background(Color.White, CircleShape).border(2.dp, GreenPrimary, CircleShape),
+                modifier = Modifier.size(120.dp).background(Color.White, CircleShape)
+                    .border(2.dp, accessiblePrimaryColor(), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(80.dp), tint = GreenPrimary)
+                Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(80.dp), tint = accessiblePrimaryColor())
             }
             
             Spacer(modifier = Modifier.height(24.dp))
-            
-            Text("João da Silva", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-            Text("Cartão SUS: 123 4567 8901 2345", color = Color.Black, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.no_profile_data),
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
             
             Spacer(modifier = Modifier.height(40.dp))
             
@@ -670,9 +745,18 @@ fun ProfileScreen(navController: NavController) {
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text("Último agendamento", fontWeight = FontWeight.Bold, color = GreenPrimary)
+                    Text(
+                        stringResource(R.string.last_appointment),
+                        fontWeight = FontWeight.Bold,
+                        color = accessiblePrimaryColor()
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Clínico Geral - 12/10/2026", color = Color.Black, fontSize = 16.sp)
+                    Text(
+                        ultimoAgendamento?.let { "${it.servico} - ${it.data}" }
+                            ?: stringResource(R.string.no_last_appointment),
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
@@ -682,7 +766,13 @@ fun ProfileScreen(navController: NavController) {
 // --- TELA DE ACESSIBILIDADE ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccessibilityScreen(navController: NavController) {
+fun AccessibilityScreen(
+    navController: NavController,
+    enlargedText: Boolean,
+    onEnlargedTextChange: (Boolean) -> Unit,
+    highContrast: Boolean,
+    onHighContrastChange: (Boolean) -> Unit
+) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -701,28 +791,47 @@ fun AccessibilityScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize().padding(padding).background(Color.White).padding(16.dp), 
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            AccessibilityOption(text = "Texto ampliado", icon = Icons.Default.Edit)
-            AccessibilityOption(text = "Alto contraste", icon = Icons.Default.Star)
+            AccessibilityOption(
+                text = stringResource(R.string.accessibility_enlarge_text),
+                icon = Icons.Default.Edit,
+                checked = enlargedText,
+                onCheckedChange = onEnlargedTextChange
+            )
+            AccessibilityOption(
+                text = stringResource(R.string.accessibility_high_contrast),
+                icon = Icons.Default.Star,
+                checked = highContrast,
+                onCheckedChange = onHighContrastChange
+            )
         }
     }
 }
 
 @Composable
-fun AccessibilityOption(text: String, icon: ImageVector) {
+fun AccessibilityOption(
+    text: String,
+    icon: ImageVector,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxWidth().height(72.dp),
         color = Color.White,
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, Color.LightGray)
+        border = BorderStroke(1.dp, accessibleBorderColor())
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = null, tint = GreenPrimary)
+            Icon(icon, contentDescription = null, tint = accessiblePrimaryColor())
             Spacer(modifier = Modifier.width(16.dp))
             Text(text, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.weight(1f), color = Color.Black)
-            Switch(checked = false, onCheckedChange = {}, colors = SwitchDefaults.colors(checkedThumbColor = GreenPrimary))
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(checkedThumbColor = accessiblePrimaryColor())
+            )
         }
     }
 }
@@ -754,7 +863,7 @@ fun UBSBottomNavigation(navController: NavController, currentRoute: String?) {
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = GreenPrimary,
+                    selectedIconColor = accessiblePrimaryColor(),
                     unselectedIconColor = Color.Black,
                     selectedTextColor = Color.Black,
                     unselectedTextColor = Color.Black,
@@ -782,7 +891,7 @@ fun UBSDrawerContent(navController: NavController, onClose: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Menu UBS+", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 22.sp)
-                HorizontalDivider(color = GreenPrimary, thickness = 3.dp, modifier = Modifier.fillMaxWidth(0.2f))
+                HorizontalDivider(color = accessiblePrimaryColor(), thickness = 3.dp, modifier = Modifier.fillMaxWidth(0.2f))
             }
         }
         
@@ -812,7 +921,7 @@ fun DrawerItem(label: String, icon: ImageVector, onClick: () -> Unit) {
         label = { Text(label, fontWeight = FontWeight.Medium, color = Color.Black, fontSize = 16.sp) },
         selected = false,
         onClick = onClick,
-        icon = { Icon(icon, contentDescription = null, tint = GreenPrimary) },
+        icon = { Icon(icon, contentDescription = null, tint = accessiblePrimaryColor()) },
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
     )
