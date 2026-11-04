@@ -24,22 +24,40 @@
     <string name="btn_confirm_schedule">Confirmar agendamento</string>
     <string name="schedule_description">Preencha os dados abaixo para marcar sua consulta na UBS de Água Preta.</string>
     <string name="error_empty_fields">Por favor, preencha todos os campos corretamente para realizar o agendamento.</string>
+    <string name="error_name_required">Informe o nome completo.</string>
+    <string name="error_sus_invalid">Informe os 15 dígitos do Cartão SUS.</string>
+    <string name="error_date_invalid">Informe uma data válida no formato DD/MM/AAAA.</string>
+    <string name="error_time_invalid">Informe um horário válido no formato HH:MM.</string>
+    <string name="error_service_required">Selecione um serviço da lista.</string>
     <string name="error_saving_appointment">Não foi possível salvar o agendamento. Tente novamente.</string>
-    <string name="error_loading_appointments">Não foi possível carregar os agendamentos. Tente novamente mais tarde.</string>
+    <string name="error_save_appointment">Não foi possível salvar o agendamento. Tente novamente.</string>
     <string name="loading_appointments">Carregando agendamentos...</string>
+    <string name="error_loading_appointments">Não foi possível carregar os agendamentos. Tente novamente mais tarde.</string>
+    <string name="appointment_saving">Salvando...</string>
+    <string name="saving_appointment">Salvando...</string>
+    <string name="placeholder_name">Ex.: Maria da Silva</string>
+    <string name="placeholder_sus">15 dígitos</string>
+    <string name="placeholder_date">DD/MM/AAAA</string>
+    <string name="placeholder_time">HH:MM</string>
+
+    <!-- Appointment details -->
     <string name="confirmation_service">Serviço: %1$s</string>
     <string name="confirmation_date">Data: %1$s</string>
     <string name="confirmation_time">Horário: %1$s</string>
     <string name="appointment_patient">Paciente: %1$s</string>
     <string name="appointment_service">Serviço: %1$s</string>
     <string name="appointment_sus">Cartão SUS: %1$s</string>
+    <string name="appointment_date">Data: %1$s</string>
+    <string name="appointment_time">Horário: %1$s</string>
     <string name="appointment_date_time">Agendado para: %1$s - %2$s</string>
-    <string name="appointment_saving">Salvando...</string>
 
     <!-- Success Screen -->
-    <string name="title_confirmed">Consulta agendada!</string>
-    <string name="text_confirmed">Guarde seus dados e compareça à UBS de Água Preta no horário de atendimento.</string>
+    <string name="title_confirmed">Solicitação salva</string>
+    <string name="text_confirmed">O pedido foi salvo neste aparelho. Confirme a disponibilidade diretamente com a UBS Água Preta.</string>
     <string name="card_summary">Resumo do agendamento</string>
+    <string name="no_profile_data">Os dados do perfil aparecem após o primeiro agendamento.</string>
+    <string name="no_last_appointment">Nenhum agendamento salvo.</string>
+    <string name="last_appointment">Último agendamento</string>
     <string name="btn_back_home">Voltar ao início</string>
 
     <!-- Services Screen -->
@@ -57,6 +75,10 @@
     <string name="my_schedules_title">Meus agendamentos</string>
     <string name="no_schedules">Nenhum agendamento encontrado.</string>
     <string name="next_schedule">Próximo Agendamento</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_enlarge_text">Texto ampliado</string>
+    <string name="accessibility_high_contrast">Alto contraste</string>
 
     <!-- Navigation -->
     <string name="nav_home">Início</string>
