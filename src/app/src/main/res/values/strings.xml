@@ -33,6 +33,7 @@
     <string name="error_save_appointment">Não foi possível salvar o agendamento. Tente novamente.</string>
     <string name="loading_appointments">Carregando agendamentos...</string>
     <string name="error_loading_appointments">Não foi possível carregar os agendamentos. Tente novamente mais tarde.</string>
+    <string name="btn_retry">Tentar novamente</string>
     <string name="appointment_saving">Salvando...</string>
     <string name="saving_appointment">Salvando...</string>
     <string name="placeholder_name">Ex.: Maria da Silva</string>
