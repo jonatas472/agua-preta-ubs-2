@@ -3,8 +3,11 @@ package br.edu.ifpe.ubsaude
 import android.database.sqlite.SQLiteException
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModelStore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
@@ -109,7 +112,26 @@ class AgendamentoUiStateTest {
     fun loadingStateShowsProgressMessage() {
         mostrarEstado(UiState.Carregando)
 
+        composeRule.onNodeWithTag("home_loading_indicator").assertIsDisplayed()
         composeRule.onNodeWithText("Carregando agendamentos...").assertIsDisplayed()
+    }
+
+    @Test
+    fun loadingIndicatorDisappearsWhenQuerySucceeds() {
+        val estado = mutableStateOf<UiState<List<Agendamento>>>(UiState.Carregando)
+        composeRule.setContent {
+            UBSTheme {
+                NextAppointmentCard(estado.value) {}
+            }
+        }
+
+        composeRule.onNodeWithTag("home_loading_indicator").assertIsDisplayed()
+        composeRule.runOnIdle {
+            estado.value = UiState.Sucesso(listOf(agendamentoExemplo))
+        }
+
+        assertTrue(composeRule.onAllNodesWithTag("home_loading_indicator").fetchSemanticsNodes().isEmpty())
+        composeRule.onNodeWithText("Paciente: Ana").assertIsDisplayed()
     }
 
     @Test

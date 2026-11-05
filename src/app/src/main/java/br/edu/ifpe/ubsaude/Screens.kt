@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -158,7 +159,9 @@ fun NextAppointmentCard(
             Spacer(modifier = Modifier.height(12.dp))
             when (estadoAgendamentos) {
                 UiState.Carregando -> Row(verticalAlignment = Alignment.CenterVertically) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp).testTag("home_loading_indicator")
+                    )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(stringResource(R.string.loading_appointments), color = Color.Black)
                 }
