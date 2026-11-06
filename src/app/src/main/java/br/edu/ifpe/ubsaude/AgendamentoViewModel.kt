@@ -4,12 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -22,28 +23,57 @@ data class EstadoAgendamento(
 
 /** Coordena a leitura e a persistência de agendamentos no Room. */
 class AgendamentoViewModel(private val repository: AgendamentoRepository) : ViewModel() {
-    private val _erroAoCarregar = MutableStateFlow(false)
-    val erroAoCarregar: StateFlow<Boolean> = _erroAoCarregar.asStateFlow()
+    private val _uiState =
+        MutableStateFlow<UiState<List<Agendamento>>>(UiState.Carregando)
+    val uiState: StateFlow<UiState<List<Agendamento>>> = _uiState.asStateFlow()
 
-    private val _carregando = MutableStateFlow(true)
-    val carregando: StateFlow<Boolean> = _carregando.asStateFlow()
+    private var carregamentoJob: Job? = null
 
-    val agendamentos: StateFlow<List<Agendamento>> = repository.agendamentos
-        .onEach {
-            _erroAoCarregar.value = false
-            _carregando.value = false
+    val agendamentos: StateFlow<List<Agendamento>> = uiState
+        .map { estado ->
+            when (estado) {
+                UiState.Carregando, UiState.Vazio, is UiState.Erro -> emptyList()
+                is UiState.Sucesso -> estado.dados
+            }
         }
-        .catch { exception ->
-            if (exception is CancellationException) throw exception
-            Log.e(TAG, "Não foi possível carregar os agendamentos locais.", exception)
-            _erroAoCarregar.value = true
-            _carregando.value = false
-            emit(emptyList())
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val erroAoCarregar: StateFlow<Boolean> = uiState
+        .map { it is UiState.Erro }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    val carregando: StateFlow<Boolean> = uiState
+        .map { it == UiState.Carregando }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
     private val _estado = MutableStateFlow(EstadoAgendamento())
     val estado = _estado.asStateFlow()
+
+    init {
+        carregarAgendamentos()
+    }
+
+    /** Observa novamente o Room e publica vazio, erro ou os dados carregados. */
+    fun carregarAgendamentos() {
+        carregamentoJob?.cancel()
+        _uiState.value = UiState.Carregando
+        carregamentoJob = viewModelScope.launch {
+            try {
+                repository.agendamentos.collect { agendamentos ->
+                    _uiState.value = if (agendamentos.isEmpty()) {
+                        UiState.Vazio
+                    } else {
+                        UiState.Sucesso(agendamentos)
+                    }
+                }
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                Log.e(TAG, "Não foi possível carregar os agendamentos locais.", exception)
+                _uiState.value = UiState.Erro(R.string.error_loading_appointments)
+            }
+        }
+    }
 
     /** Limpa o resultado anterior para uma nova tentativa de agendamento. */
     fun limparResultado() {

@@ -67,6 +67,7 @@ fun UBSAppContent(
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val estadoAgendamentos by agendamentoViewModel.uiState.collectAsState()
     val agendamentos by agendamentoViewModel.agendamentos.collectAsState()
     val erroAoCarregarAgendamentos by agendamentoViewModel.erroAoCarregar.collectAsState()
     val carregandoAgendamentos by agendamentoViewModel.carregando.collectAsState()
@@ -110,9 +111,8 @@ fun UBSAppContent(
                     composable("home") {
                         HomeScreen(
                             navController = navController,
-                            agendamentos = agendamentos,
-                            carregando = carregandoAgendamentos,
-                            erroAoCarregar = erroAoCarregarAgendamentos,
+                            estadoAgendamentos = estadoAgendamentos,
+                            onTentarNovamente = agendamentoViewModel::carregarAgendamentos,
                             onOpenDrawer = { scope.launch { drawerState.open() } }
                         )
                     }

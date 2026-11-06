@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,9 +52,8 @@ import kotlinx.coroutines.flow.collect
 @Composable
 fun HomeScreen(
     navController: NavController,
-    agendamentos: List<Agendamento>,
-    carregando: Boolean,
-    erroAoCarregar: Boolean,
+    estadoAgendamentos: UiState<List<Agendamento>>,
+    onTentarNovamente: () -> Unit,
     onOpenDrawer: () -> Unit
 ) {
     Scaffold(
@@ -94,7 +94,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Card de Próximo Agendamento
-            NextAppointmentCard(agendamentos.firstOrNull(), carregando, erroAoCarregar)
+            NextAppointmentCard(estadoAgendamentos, onTentarNovamente)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -137,9 +137,8 @@ fun HomeScreen(
 
 @Composable
 fun NextAppointmentCard(
-    agendamento: Agendamento?,
-    carregando: Boolean,
-    erroAoCarregar: Boolean
+    estadoAgendamentos: UiState<List<Agendamento>>,
+    onTentarNovamente: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -158,31 +157,50 @@ fun NextAppointmentCard(
                 Icon(Icons.Default.DateRange, contentDescription = null, tint = accessiblePrimaryColor())
             }
             Spacer(modifier = Modifier.height(12.dp))
-            when {
-                carregando -> Text(stringResource(R.string.loading_appointments), color = Color.Black)
-                erroAoCarregar -> Text(stringResource(R.string.error_loading_appointments), color = Color.Black)
-                agendamento == null -> Text(
+            when (estadoAgendamentos) {
+                UiState.Carregando -> Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp).testTag("home_loading_indicator")
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(stringResource(R.string.loading_appointments), color = Color.Black)
+                }
+                UiState.Vazio -> Text(
                     stringResource(R.string.no_schedules),
                     color = Color.Black,
                     fontSize = 14.sp
                 )
-                else -> {
+                is UiState.Erro -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        stringResource(R.string.appointment_patient, agendamento.nome),
-                        color = Color.Black,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        stringResource(estadoAgendamentos.mensagemRecurso),
+                        color = MaterialTheme.colorScheme.error
                     )
-                    Text(
-                        stringResource(R.string.appointment_service, agendamento.servico),
-                        color = Color.Black,
-                        fontSize = 14.sp
-                    )
-                    Text(
-                        stringResource(R.string.appointment_date_time, agendamento.data, agendamento.horario),
-                        color = Color.Black,
-                        fontSize = 14.sp
-                    )
+                    OutlinedButton(onClick = onTentarNovamente) {
+                        Text(stringResource(R.string.btn_retry))
+                    }
+                }
+                is UiState.Sucesso -> {
+                    val agendamento = estadoAgendamentos.dados.firstOrNull()
+                    if (agendamento == null) {
+                        Text(stringResource(R.string.no_schedules), color = Color.Black, fontSize = 14.sp)
+                    } else {
+                        Text(
+                            stringResource(R.string.appointment_patient, agendamento.nome),
+                            color = Color.Black,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            stringResource(R.string.appointment_service, agendamento.servico),
+                            color = Color.Black,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            stringResource(R.string.appointment_date_time, agendamento.data, agendamento.horario),
+                            color = Color.Black,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
         }
